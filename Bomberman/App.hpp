@@ -3,5 +3,6 @@
 class App
 {
 public:
+    App();
     void run();
 };

@@ -1,11 +1,30 @@
 #include "GameStage.hpp"
 
-bool GameStage::run(entityx::TimeDelta dt, sf::RenderWindow& window)
-{
+std::unique_ptr<GameStage> GameStage::activeStage = nullptr;
 
+bool GameStage::run(const entityx::TimeDelta dt, sf::RenderWindow& window)
+{
+    if (activeStage)
+    {
+        if (activeStage->update(dt))
+            activeStage->draw(window);
+        else
+        {
+            activeStage = nullptr;
+            return false;
+        }
+        return true;
+    }
+
+    return false;
 }
 
-GameStage* GameStage::get_stage()
+std::unique_ptr<GameStage>& GameStage::getStage()
 {
-    return active_stage;
+    return activeStage;
+}
+
+void GameStage::changeStage(std::unique_ptr<GameStage> nextStage)
+{
+    activeStage = std::move(nextStage);
 }

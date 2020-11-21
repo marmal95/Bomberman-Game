@@ -5,20 +5,12 @@
 #include "GameplayStage.hpp"
 #include "ExitStage.hpp"
 
-enum class Font
-{
-    MainFont
-};
-
 class ResourcesManager
 {
 public:
     sf::RenderWindow window;
-    MenuStage menuStage;
-    GameplayStage gameplayStage;
-    ExitStage exitStage;
 
-    static ResourcesManager& get_instance()
+    static ResourcesManager& getInstance()
     {
         static ResourcesManager instance{};
         return instance;
@@ -26,7 +18,9 @@ public:
 
 private:
     ResourcesManager() : window(sf::VideoMode(800, 800), "Bomberman", sf::Style::Titlebar | sf::Style::Close)
-    {}
+    {
+        window.setVerticalSyncEnabled(true);
+    }
 
     ResourcesManager(const ResourcesManager&) = delete;
     ResourcesManager(ResourcesManager&&) = delete;

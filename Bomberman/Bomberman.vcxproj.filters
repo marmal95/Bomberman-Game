@@ -53,5 +53,11 @@
     <ClInclude Include="GameStage.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceHolder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceID.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <entityx/entityx.h>
+#include <memory>
 
 class GameStage
 {
@@ -13,16 +14,15 @@ public:
 	GameStage& operator=(GameStage&&) = delete;
 	virtual ~GameStage() = default;
 
-	bool run(entityx::TimeDelta, sf::RenderWindow& window);
-	GameStage* get_stage();
-
-	virtual bool init() = 0;
-	virtual bool update(float) = 0;
+	virtual bool update(const entityx::TimeDelta) = 0;
 	virtual void draw(sf::RenderWindow&) = 0;
-	virtual void release() = 0;
+	virtual void handleEvent(sf::Event&) = 0;
+
+	static bool run(const entityx::TimeDelta, sf::RenderWindow&);
+	static std::unique_ptr<GameStage>& getStage();
+	static void changeStage(std::unique_ptr<GameStage>);
 
 private:
-	GameStage* active_stage;
-	GameStage* next_stage;
+	static std::unique_ptr<GameStage> activeStage;
 };
 

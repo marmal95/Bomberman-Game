@@ -1,14 +1,19 @@
 #include "App.hpp"
 #include "ResourceManager.hpp"
+#include "GameStage.hpp"
 #include <SFML/Window/Event.hpp>
 
 
+App::App()
+{
+    GameStage::changeStage(std::make_unique<MenuStage>());
+}
+
 void App::run()
 {
-    auto& window = ResourcesManager::get_instance().window;
+    auto& window = ResourcesManager::getInstance().window;
 
     sf::Clock clock;
-
     while (window.isOpen())
     {
         sf::Event event{};
@@ -17,9 +22,18 @@ void App::run()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (auto& stage = GameStage::getStage(); stage != nullptr)
+                stage->handleEvent(event);
         }
 
+        const double dt = clock.restart().asSeconds();
         window.clear();
-        window.display();
+        if (GameStage::run(dt, window))
+            window.display();
+        else
+        {
+            window.close();
+            break;
+        }
     }
 }
