@@ -46,7 +46,7 @@ void MenuStage::handleEvent(sf::Event& event)
     }
 }
 
-void MenuStage::resizeWindow()
+void MenuStage::resizeWindow() const
 {
     ResourcesManager::getInstance().window.setSize(sf::Vector2u(576, 576));
     ResourcesManager::getInstance().window.setView(sf::View(sf::FloatRect(0, 0, 576, 576)));

@@ -13,7 +13,7 @@ public:
 	void handleEvent(sf::Event&) override;
 
 private:
-	void resizeWindow();
+	void resizeWindow() const;
 	void loadResources();
 	void initSprites();
 	void initLayout();

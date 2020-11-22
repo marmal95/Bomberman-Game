@@ -1,10 +1,10 @@
 #pragma once
 
+#include "IGameStage.hpp"
 #include <SFML/Graphics.hpp>
-#include <entityx/entityx.h>
 #include <memory>
 
-class GameStage
+class GameStage : public IGameStage
 {
 public:
 	GameStage() = default;
@@ -13,10 +13,6 @@ public:
 	GameStage& operator=(const GameStage&) = delete;
 	GameStage& operator=(GameStage&&) = delete;
 	virtual ~GameStage() = default;
-
-	virtual bool update(const entityx::TimeDelta) = 0;
-	virtual void draw(sf::RenderWindow&) = 0;
-	virtual void handleEvent(sf::Event&) = 0;
 
 	static bool run(const entityx::TimeDelta, sf::RenderWindow&);
 	static std::unique_ptr<GameStage>& getStage();

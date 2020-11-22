@@ -144,18 +144,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="DrawSystem.cpp" />
+    <ClCompile Include="EcsGameplay.cpp" />
     <ClCompile Include="ExitStage.cpp" />
     <ClCompile Include="GameplayStage.cpp" />
     <ClCompile Include="GameStage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuStage.cpp" />
+    <ClCompile Include="MoveSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="DrawSystem.hpp" />
+    <ClInclude Include="EcsGameplay.hpp" />
     <ClInclude Include="ExitStage.hpp" />
     <ClInclude Include="GameplayStage.hpp" />
     <ClInclude Include="GameStage.hpp" />
+    <ClInclude Include="IGameStage.hpp" />
     <ClInclude Include="MenuStage.hpp" />
+    <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceID.hpp" />
     <ClInclude Include="ResourceManager.hpp" />

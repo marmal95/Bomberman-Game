@@ -9,5 +9,13 @@ enum class ResourceID
     MenuTwoPlayers,
     MenuTwoPlayersHover,
     MenuControlPlayerOne,
-    MenuControlPlayerTwo
+    MenuControlPlayerTwo,
+
+    BackgroundTile,
+    ExplodableBlock,
+    SolidBlock,
+    BombermanBack,
+    BombermanFront,
+    BombermanLeft,
+    BombermanRight,
 };
