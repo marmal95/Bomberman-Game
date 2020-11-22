@@ -150,6 +150,7 @@
     <ClCompile Include="DrawSystem.cpp" />
     <ClCompile Include="EcsGameplay.cpp" />
     <ClCompile Include="ExitStage.cpp" />
+    <ClCompile Include="ExplosionSystem.cpp" />
     <ClCompile Include="GameplayStage.cpp" />
     <ClCompile Include="GameStage.cpp" />
     <ClCompile Include="main.cpp" />
@@ -167,9 +168,12 @@
     <ClInclude Include="DrawSystem.hpp" />
     <ClInclude Include="EcsGameplay.hpp" />
     <ClInclude Include="ExitStage.hpp" />
+    <ClInclude Include="Explodable.hpp" />
+    <ClInclude Include="ExplosionSystem.hpp" />
     <ClInclude Include="GameplayStage.hpp" />
     <ClInclude Include="GameStage.hpp" />
     <ClInclude Include="IGameStage.hpp" />
+    <ClInclude Include="Map.hpp" />
     <ClInclude Include="MenuStage.hpp" />
     <ClInclude Include="Movable.hpp" />
     <ClInclude Include="MoveChangeEvent.hpp" />
@@ -178,6 +182,8 @@
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceID.hpp" />
     <ClInclude Include="ResourceManager.hpp" />
+    <ClInclude Include="SpawnBombEvent.hpp" />
+    <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Transformable.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

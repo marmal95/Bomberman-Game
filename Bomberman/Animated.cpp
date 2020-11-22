@@ -1,7 +1,7 @@
 #include "Animated.hpp"
 
 Animated::Animated(const uint32_t frameWidth, const uint32_t frameHeight, const uint32_t framesNumber, const float speed)
-    : frames{}, frame{}, speed{ speed }, paused{ true }
+    : frames{}, frame{}, speed{ speed }, paused{ false }
 {
     frames.reserve(framesNumber);
     

@@ -27,7 +27,7 @@ void MenuStage::draw(sf::RenderWindow& window)
 
 void MenuStage::handleEvent(sf::Event& event)
 {
-    if (event.type == sf::Event::EventType::KeyPressed &&
+    if (event.type == sf::Event::EventType::KeyReleased &&
         event.key.code == sf::Keyboard::Space)
     {
         GameStage::changeStage(std::make_unique<GameplayStage>());

@@ -3,6 +3,7 @@
 #include "Transformable.hpp"
 #include "ResourceManager.hpp"
 #include "MoveChangeEvent.hpp"
+#include "Player.hpp"
 
 #ifdef _DEBUG
 #include "Collidable.hpp"
@@ -19,11 +20,23 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
 	auto& window = ResourcesManager::getInstance().window;
 	es.each<Transformable, Drawable>([&](entityx::Entity entity, Transformable& transformable, Drawable& drawable)
 	{
-		drawable.sprite.setPosition(transformable.position);
-		drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
-									transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
-		window.draw(drawable.sprite);
+		drawEntity(drawable, transformable, window);
 
+#ifdef _DEBUG
+		if (entity.has_component<Collidable>())
+		{
+			sf::RectangleShape shape{};
+			shape.setPosition(transformable.position);
+			shape.setFillColor({ 255, 0, 0, 128 });
+			shape.setSize(transformable.size);
+			window.draw(shape);
+		}
+#endif
+	});
+
+	es.each<Player, Transformable, Drawable>([&](entityx::Entity entity, Player& player, Transformable& transformable, Drawable& drawable)
+	{
+		drawEntity(drawable, transformable, window);
 #ifdef _DEBUG
 		if (entity.has_component<Collidable>())
 		{
@@ -61,4 +74,12 @@ void DrawSystem::handleMoveChangeEvents()
 		}
 	}
 	moveChangeEvents.clear();
+}
+
+void DrawSystem::drawEntity(Drawable& drawable, Transformable& transformable, sf::RenderWindow& window)
+{
+	drawable.sprite.setPosition(transformable.position);
+	drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
+		transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
+	window.draw(drawable.sprite);
 }

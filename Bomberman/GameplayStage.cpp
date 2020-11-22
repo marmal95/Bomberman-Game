@@ -19,8 +19,9 @@ void GameplayStage::draw(sf::RenderWindow& window)
     ecsGameplay->draw(window);
 }
 
-void GameplayStage::handleEvent(sf::Event&)
+void GameplayStage::handleEvent(sf::Event& event)
 {
+    ecsGameplay->handleEvent(event);
 }
 
 const ResourceHolder<sf::Texture, ResourceID>& GameplayStage::getTextures() const
@@ -42,8 +43,9 @@ void GameplayStage::loadResources()
     textures.load(ResourceID::BackgroundTile, "resources/Blocks/BackgroundTile.png");
     textures.load(ResourceID::ExplodableBlock, "resources/Blocks/ExplodableBlock.png");
     textures.load(ResourceID::SolidBlock, "resources/Blocks/SolidBlock.png");
-    textures.load(ResourceID::BombermanBack, "resources/Bomberman/Back/Bomberman_Back.png");
-    textures.load(ResourceID::BombermanFront, "resources/Bomberman/Front/Bomberman_Front.png");
-    textures.load(ResourceID::BombermanLeft, "resources/Bomberman/Side/Bomberman_Left.png");
-    textures.load(ResourceID::BombermanRight, "resources/Bomberman/Side/Bomberman_Right.png");
+    textures.load(ResourceID::BombermanBack, "resources/Bomberman/Bomberman_Back.png");
+    textures.load(ResourceID::BombermanFront, "resources/Bomberman/Bomberman_Front.png");
+    textures.load(ResourceID::BombermanLeft, "resources/Bomberman/Bomberman_Left.png");
+    textures.load(ResourceID::BombermanRight, "resources/Bomberman/Bomberman_Right.png");
+    textures.load(ResourceID::Bomb, "resources/Bomb/Bomb.png");
 }
