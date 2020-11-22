@@ -20,6 +20,7 @@ public:
 	void handleEvent(sf::Event&) override;
 
 private:
+	void createMap();
 	void createPlayer();
 
 	const GameplayStage& gameplayStage;

@@ -4,6 +4,10 @@
 #include "ResourceManager.hpp"
 #include "MoveChangeEvent.hpp"
 
+#ifdef _DEBUG
+#include "Collidable.hpp"
+#endif
+
 DrawSystem::DrawSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
 	: textures{ textures }
 {}
@@ -16,7 +20,20 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
 	es.each<Transformable, Drawable>([&](entityx::Entity entity, Transformable& transformable, Drawable& drawable)
 	{
 		drawable.sprite.setPosition(transformable.position);
+		drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
+									transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
 		window.draw(drawable.sprite);
+
+#ifdef _DEBUG
+		if (entity.has_component<Collidable>())
+		{
+			sf::RectangleShape shape{};
+			shape.setPosition(transformable.position);
+			shape.setFillColor({ 255, 0, 0, 128 });
+			shape.setSize(transformable.size);
+			window.draw(shape);
+		}
+#endif
 	});
 }
 

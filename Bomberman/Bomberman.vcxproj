@@ -146,6 +146,7 @@
     <ClCompile Include="Animated.cpp" />
     <ClCompile Include="AnimateSystem.cpp" />
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="DrawSystem.cpp" />
     <ClCompile Include="EcsGameplay.cpp" />
     <ClCompile Include="ExitStage.cpp" />
@@ -159,6 +160,9 @@
     <ClInclude Include="Animated.hpp" />
     <ClInclude Include="AnimateSystem.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Collidable.hpp" />
+    <ClInclude Include="CollisionSystem.hpp" />
+    <ClInclude Include="Constants.hpp" />
     <ClInclude Include="Drawable.hpp" />
     <ClInclude Include="DrawSystem.hpp" />
     <ClInclude Include="EcsGameplay.hpp" />
@@ -170,6 +174,7 @@
     <ClInclude Include="Movable.hpp" />
     <ClInclude Include="MoveChangeEvent.hpp" />
     <ClInclude Include="MoveSystem.hpp" />
+    <ClInclude Include="Player.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceID.hpp" />
     <ClInclude Include="ResourceManager.hpp" />

@@ -1,5 +1,6 @@
 #include "GameplayStage.hpp"
 #include "ResourceManager.hpp"
+#include "Constants.hpp"
 
 GameplayStage::GameplayStage()
 {
@@ -29,8 +30,11 @@ const ResourceHolder<sf::Texture, ResourceID>& GameplayStage::getTextures() cons
 
 void GameplayStage::resizeWindow() const
 {
-    ResourcesManager::getInstance().window.setSize(sf::Vector2u(800, 800));
-    ResourcesManager::getInstance().window.setView(sf::View(sf::FloatRect(0, 0, 800, 800)));
+    const auto desktopMode = sf::VideoMode::getDesktopMode();
+    auto& window = ResourcesManager::getInstance().window;
+    window.setSize(sf::Vector2u(WIDTH_TILES_NUM * 64, HEIGHT_TILES_NUM * 64));
+    window.setView(sf::View(sf::FloatRect(0, 0, WIDTH_TILES_NUM * 64, HEIGHT_TILES_NUM * 64)));
+    window.setPosition({ static_cast<int>(desktopMode.width - window.getSize().x) / 2, 0 });
 }
 
 void GameplayStage::loadResources()
