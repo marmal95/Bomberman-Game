@@ -5,7 +5,7 @@ GameplayStage::GameplayStage()
 {
     resizeWindow();
     loadResources();
-    ecsGameplay = std::make_unique<EcsGameplay>();
+    ecsGameplay = std::make_unique<EcsGameplay>(std::ref(*this));
 }
 
 bool GameplayStage::update(const entityx::TimeDelta dt)
@@ -20,6 +20,11 @@ void GameplayStage::draw(sf::RenderWindow& window)
 
 void GameplayStage::handleEvent(sf::Event&)
 {
+}
+
+const sf::Texture& GameplayStage::getTexture(const ResourceID resource) const
+{
+    return textures.getResource(resource);
 }
 
 void GameplayStage::resizeWindow() const
