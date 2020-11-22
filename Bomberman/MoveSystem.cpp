@@ -1,9 +1,11 @@
 #include "MoveSystem.hpp"
 #include "Movable.hpp"
 #include "Transformable.hpp"
+#include "MoveChangeEvent.hpp"
 #include <SFML/Window/Keyboard.hpp>
 
-void MoveSystem::update(entityx::EntityManager& es, entityx::EventManager&, entityx::TimeDelta dt)
+
+void MoveSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
     es.each<Movable, Transformable>([&](entityx::Entity entity, Movable& movable, Transformable& transformable)
     {
@@ -29,6 +31,12 @@ void MoveSystem::update(entityx::EntityManager& es, entityx::EventManager&, enti
 		{
 			transformable.position += sf::Vector2f(-movable.velocity.x * static_cast<float>(dt), 0);
 			actDirection = Direction::Left;
+		}
+
+		if (prevDirection != actDirection)
+		{
+			movable.moveDirection = actDirection;
+			events.emit<MoveChangeEvent>({ entity, actDirection });
 		}
     });
 }

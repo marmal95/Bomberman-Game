@@ -4,11 +4,11 @@
 
 enum class Direction
 {
-	None,
 	Down,
 	Left,
 	Right,
-	Up
+	Up,
+	None,
 };
 
 struct Movable

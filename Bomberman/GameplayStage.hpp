@@ -15,7 +15,7 @@ public:
 	void draw(sf::RenderWindow& window) override;
 	void handleEvent(sf::Event&) override;
 
-	const sf::Texture& getTexture(const ResourceID) const;
+	const ResourceHolder<sf::Texture, ResourceID>& getTextures() const;
 
 private:
 	void resizeWindow() const;

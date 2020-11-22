@@ -22,9 +22,9 @@ void GameplayStage::handleEvent(sf::Event&)
 {
 }
 
-const sf::Texture& GameplayStage::getTexture(const ResourceID resource) const
+const ResourceHolder<sf::Texture, ResourceID>& GameplayStage::getTextures() const
 {
-    return textures.getResource(resource);
+    return textures;
 }
 
 void GameplayStage::resizeWindow() const
