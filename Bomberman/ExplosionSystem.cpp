@@ -3,6 +3,7 @@
 #include "Drawable.hpp"
 #include "Animated.hpp"
 #include "Explodable.hpp"
+#include "Collidable.hpp"
 
 ExplosionSystem::ExplosionSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }
@@ -17,8 +18,6 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager&,
 
         if (explodable.timeToExplode <= 0)
         {
-            // TODO: Handle
-            std::cout << "BOOM";
             entity.destroy();
         }
     });
@@ -38,14 +37,23 @@ void ExplosionSystem::handleSpawnBombEvents(entityx::EntityManager& es)
 {
     for (auto& event : spawnBombEvents)
     {
-        auto bomb = es.create();
-        auto playerPosition = event.player.component<Transformable>()->position;
-        playerPosition.x = static_cast<int>(playerPosition.x) / 64 * 64;
-        playerPosition.y = static_cast<int>(playerPosition.y) / 64 * 64;
-        bomb.assign<Transformable>(Transformable{ { 48, 48 }, playerPosition });
-        bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
-        bomb.assign<Animated>(48, 48, 3, 0.1);
-        bomb.assign<Explodable>(Explodable{ 3 });
+        spawnBomb(es, event);
     }
     spawnBombEvents.clear();
+}
+
+void ExplosionSystem::spawnBomb(entityx::EntityManager& es, SpawnBombEvent& event)
+{
+    auto bomb = es.create();
+    auto playerPosition = event.player.component<Transformable>()->position;
+    playerPosition.x = static_cast<int>(playerPosition.x + 15) / 64 * 64 + 8;
+    playerPosition.y = static_cast<int>(playerPosition.y + 15) / 64 * 64 + 8;
+
+    bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
+    auto drawable = bomb.component<Drawable>();
+
+    bomb.assign<Transformable>(Transformable{ { 48, 48 }, playerPosition });
+    bomb.assign<Animated>(48, 48, 3, 0.1);
+    bomb.assign<Explodable>(Explodable{ 3 });
+    bomb.assign<Collidable>(Collidable{ event.player });
 }

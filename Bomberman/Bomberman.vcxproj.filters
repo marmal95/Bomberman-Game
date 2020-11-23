@@ -137,5 +137,8 @@
     <ClInclude Include="Explodable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Direction.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

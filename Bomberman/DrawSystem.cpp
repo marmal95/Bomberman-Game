@@ -42,6 +42,7 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
 		{
 			sf::RectangleShape shape{};
 			shape.setPosition(transformable.position);
+			shape.setOrigin(drawable.sprite.getOrigin());
 			shape.setFillColor({ 255, 0, 0, 128 });
 			shape.setSize(transformable.size);
 			window.draw(shape);
@@ -78,8 +79,7 @@ void DrawSystem::handleMoveChangeEvents()
 
 void DrawSystem::drawEntity(Drawable& drawable, Transformable& transformable, sf::RenderWindow& window)
 {
-	drawable.sprite.setPosition(transformable.position);
 	drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
-		transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
+								transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
 	window.draw(drawable.sprite);
 }

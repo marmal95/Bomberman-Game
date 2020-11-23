@@ -1,16 +1,29 @@
 #include "CollisionSystem.hpp"
-#include "Collidable.hpp"
 #include "Transformable.hpp"
 #include "Player.hpp"
+
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
 {
     handleMoveChangeEvents();
 
     es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player&, Collidable& playerCollidable) {
+        playerCollidable.direction = Direction::None;
         es.each<Collidable>([&](entityx::Entity otherEntity, Collidable& otherCollidable) {
             if (playerEntity != otherEntity)
-                checkCollision(events, playerEntity, otherEntity);
+            {
+                const auto collisionInfo = checkCollision(playerEntity, otherEntity);
+                if (collisionInfo && !shouldSkipCollision(playerEntity, otherCollidable))
+                {
+                    auto& playerTransformable = *playerEntity.component<Transformable>();
+                    playerTransformable.position += collisionInfo->collisionRange;
+                    playerCollidable.direction = collisionInfo->direction;
+                }
+                else if (!collisionInfo && shouldSkipCollision(playerEntity, otherCollidable))
+                {
+                    otherCollidable.spawner.reset();
+                }
+            }
         });
     });
 }
@@ -32,17 +45,21 @@ void CollisionSystem::handleMoveChangeEvents()
         if (event.entity.has_component<Collidable>())
         {
             auto collidable = event.entity.component<Collidable>();
-            *collidable = Collidable{};
+            *collidable = Collidable{ collidable->spawner };
         }
     }
     moveChangeEvents.clear();
 }
 
-void CollisionSystem::checkCollision(entityx::EventManager& events, entityx::Entity playerEntity, entityx::Entity otherEntity) const
+bool CollisionSystem::shouldSkipCollision(const entityx::Entity& playerEntity, Collidable& otherCollidable) const
 {
-    auto& playerTransformable = *playerEntity.component<Transformable>();
-    auto& otherTransformable = *otherEntity.component<Transformable>();
-    auto& playerCollidable = *playerEntity.component<Collidable>();
+    return playerEntity == otherCollidable.spawner;
+}
+
+std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const
+{
+    const auto& playerTransformable = *playerEntity.component<Transformable>();
+    const auto& otherTransformable = *otherEntity.component<Transformable>();
 
     const auto w = 0.5f * (playerTransformable.size.x + otherTransformable.size.x);
     const auto h = 0.5f * (playerTransformable.size.y + otherTransformable.size.y);
@@ -51,34 +68,24 @@ void CollisionSystem::checkCollision(entityx::EventManager& events, entityx::Ent
 
     if (abs(dx) <= w && abs(dy) <= h)
     {
-        float wy = w * dy;
-        float hx = h * dx;
+        const auto wy = w * dy;
+        const auto hx = h * dx;
 
         if (wy > hx)
         {
             if (wy > -hx)
-            {
-                playerCollidable.collidedUp = true;
-                playerTransformable.position.y += h - abs(dy);
-            }
+                return CollisionInfo{ { 0, h - abs(dy) }, Direction::Up };
             else
-            {
-                playerCollidable.collidedRight = true;
-                playerTransformable.position.x -= w - abs(dx);
-            }
+                return CollisionInfo{ { -(w - abs(dx)), 0 }, Direction::Right };
         }
         else
         {
             if (wy > -hx)
-            {
-                playerCollidable.collidedLeft = true;
-                playerTransformable.position.x += w - abs(dx);
-            }
+                return CollisionInfo{ { w - abs(dx), 0 }, Direction::Left };
             else
-            {
-                playerCollidable.collidedDown = true;
-                playerTransformable.position.y -= h - abs(dy);
-            }
+                return CollisionInfo{ { 0, -(h - abs(dy)) }, Direction::Down };
         }
     }
+
+    return std::nullopt;
 }

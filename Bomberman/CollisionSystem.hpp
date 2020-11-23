@@ -1,8 +1,18 @@
 #pragma once
 
 #include "MoveChangeEvent.hpp"
+#include "Collidable.hpp"
 #include <entityx/entityx.h>
 #include <vector>
+#include <optional>
+
+using CollisionRange = sf::Vector2f;
+
+struct CollisionInfo
+{
+	CollisionRange collisionRange{};
+	Direction direction{};
+};
 
 class CollisionSystem : public entityx::System<CollisionSystem>, public entityx::Receiver<CollisionSystem>
 {
@@ -13,7 +23,8 @@ public:
 
 private:
 	void handleMoveChangeEvents();
-	void checkCollision(entityx::EventManager& events, entityx::Entity, entityx::Entity) const;
+	bool shouldSkipCollision(const entityx::Entity&, Collidable&) const;
+	std::optional<CollisionInfo> checkCollision(entityx::Entity, entityx::Entity) const;
 
 	std::vector<MoveChangeEvent> moveChangeEvents;
 };

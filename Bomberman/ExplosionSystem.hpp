@@ -18,8 +18,9 @@ public:
 
 private:
 	void handleSpawnBombEvents(entityx::EntityManager&);
-	std::vector<SpawnBombEvent> spawnBombEvents;
+	void spawnBomb(entityx::EntityManager&, SpawnBombEvent&);
 
+	std::vector<SpawnBombEvent> spawnBombEvents;
 	const ResourceHolder<sf::Texture, ResourceID>& textures;
 };
 

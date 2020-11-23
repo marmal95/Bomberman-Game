@@ -164,6 +164,7 @@
     <ClInclude Include="Collidable.hpp" />
     <ClInclude Include="CollisionSystem.hpp" />
     <ClInclude Include="Constants.hpp" />
+    <ClInclude Include="Direction.hpp" />
     <ClInclude Include="Drawable.hpp" />
     <ClInclude Include="DrawSystem.hpp" />
     <ClInclude Include="EcsGameplay.hpp" />

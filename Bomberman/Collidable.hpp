@@ -1,9 +1,15 @@
 #pragma once
 
+#include <entityx/Entity.h>
+#include <optional>
+#include "Direction.hpp"
+
 struct Collidable
 {
-	bool collidedLeft;
-	bool collidedRight;
-	bool collidedUp;
-	bool collidedDown;
+	Collidable(std::optional<entityx::Entity> spawner = std::nullopt)
+		: spawner{ spawner }, direction{ Direction::None }
+	{}
+
+	std::optional<entityx::Entity> spawner;
+	Direction direction;
 };

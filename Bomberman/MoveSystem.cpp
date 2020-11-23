@@ -13,22 +13,22 @@ void MoveSystem::update(entityx::EntityManager& es, entityx::EventManager& event
         Direction prevDirection = movable.moveDirection;
         Direction actDirection = Direction::None;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !collidable.collidedDown)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && collidable.direction != Direction::Down)
         {
             transformable.position += sf::Vector2f(0, movable.velocity.y * static_cast<float>(dt));
             actDirection = Direction::Down;
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !collidable.collidedRight)
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && collidable.direction != Direction::Right)
         {
             transformable.position += sf::Vector2f(movable.velocity.x * static_cast<float>(dt), 0);
             actDirection = Direction::Right;
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !collidable.collidedUp)
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && collidable.direction != Direction::Up)
         {
             transformable.position += sf::Vector2f(0, -movable.velocity.y * static_cast<float>(dt));
             actDirection = Direction::Up;
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !collidable.collidedLeft)
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && collidable.direction != Direction::Left)
         {
             transformable.position += sf::Vector2f(-movable.velocity.x * static_cast<float>(dt), 0);
             actDirection = Direction::Left;
