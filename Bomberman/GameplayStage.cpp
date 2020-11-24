@@ -48,4 +48,5 @@ void GameplayStage::loadResources()
     textures.load(ResourceID::BombermanLeft, "resources/Bomberman/Bomberman_Left.png");
     textures.load(ResourceID::BombermanRight, "resources/Bomberman/Bomberman_Right.png");
     textures.load(ResourceID::Bomb, "resources/Bomb/Bomb.png");
+    textures.load(ResourceID::Flame, "resources/Flame/Flame.png");
 }

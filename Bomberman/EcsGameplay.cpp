@@ -61,23 +61,26 @@ void EcsGameplay::createMap()
     {
         for (int j = 0; j < WIDTH_TILES_NUM; j++)
         {
+            auto tile = entities.create();
+            tile.assign<Transformable>(Transformable{ { 64.f, 64.f }, { j * 64.f, i * 64.f } });
+
             if (i == 0 || i == 20 || j == 0 || j == 20 || i % 2 == 0 && j % 2 == 0)
             {
-                auto tile = entities.create();
                 tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::SolidBlock));
-                tile.assign<Transformable>(Transformable{ { 64.f, 64.f },{ j * 64.f,{ i * 64.f } } });
                 tile.assign<Collidable>();
+                tile.assign<Tile>(Tile{ TileType::SolidBlock });
                 map.tiles[i][j] = { TileType::SolidBlock };
             }
             else
             {
-                auto tile = entities.create();
                 tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BackgroundTile));
-                tile.assign<Transformable>(Transformable{ { 64.f, 64.f },{ j * 64.f,{ i * 64.f } } });
+                tile.assign<Tile>(Tile{ TileType::None });
                 map.tiles[i][j] = { TileType::None };
             }
         }
     }
+
+
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);

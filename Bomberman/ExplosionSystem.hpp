@@ -19,6 +19,7 @@ public:
 private:
 	void handleSpawnBombEvents(entityx::EntityManager&);
 	void spawnBomb(entityx::EntityManager&, SpawnBombEvent&);
+	void spawnFlame(entityx::EntityManager&, const sf::Vector2f);
 
 	std::vector<SpawnBombEvent> spawnBombEvents;
 	const ResourceHolder<sf::Texture, ResourceID>& textures;

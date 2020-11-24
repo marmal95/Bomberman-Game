@@ -23,7 +23,9 @@ public:
 
 private:
 	void handleMoveChangeEvents();
-	bool shouldSkipCollision(const entityx::Entity&, Collidable&) const;
+	void handleBlockingCollision(entityx::Entity, entityx::Entity) const;
+	void handleFlameCollision(entityx::Entity, entityx::Entity) const;
+	bool shouldSkipCollision(const entityx::Entity&, const Collidable&) const;
 	std::optional<CollisionInfo> checkCollision(entityx::Entity, entityx::Entity) const;
 
 	std::vector<MoveChangeEvent> moveChangeEvents;

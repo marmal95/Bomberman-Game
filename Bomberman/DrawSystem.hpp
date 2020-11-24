@@ -6,8 +6,8 @@
 #include "ResourceID.hpp"
 #include "MoveChangeEvent.hpp"
 
-class Drawable;
-class Transformable;
+struct Drawable;
+struct Transformable;
 
 namespace sf
 {

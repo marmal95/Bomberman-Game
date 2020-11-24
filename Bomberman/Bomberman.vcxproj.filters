@@ -134,10 +134,13 @@
     <ClInclude Include="SpawnBombEvent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Explodable.hpp">
+    <ClInclude Include="Direction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Direction.hpp">
+    <ClInclude Include="Bomb.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Flame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -161,6 +161,7 @@
     <ClInclude Include="Animated.hpp" />
     <ClInclude Include="AnimateSystem.hpp" />
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Bomb.hpp" />
     <ClInclude Include="Collidable.hpp" />
     <ClInclude Include="CollisionSystem.hpp" />
     <ClInclude Include="Constants.hpp" />
@@ -169,8 +170,8 @@
     <ClInclude Include="DrawSystem.hpp" />
     <ClInclude Include="EcsGameplay.hpp" />
     <ClInclude Include="ExitStage.hpp" />
-    <ClInclude Include="Explodable.hpp" />
     <ClInclude Include="ExplosionSystem.hpp" />
+    <ClInclude Include="Flame.hpp" />
     <ClInclude Include="GameplayStage.hpp" />
     <ClInclude Include="GameStage.hpp" />
     <ClInclude Include="IGameStage.hpp" />

@@ -1,6 +1,9 @@
 #include "CollisionSystem.hpp"
 #include "Transformable.hpp"
 #include "Player.hpp"
+#include "Tile.hpp"
+#include "Bomb.hpp"
+#include "Flame.hpp"
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
@@ -9,21 +12,14 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
 
     es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player&, Collidable& playerCollidable) {
         playerCollidable.direction = Direction::None;
-        es.each<Collidable>([&](entityx::Entity otherEntity, Collidable& otherCollidable) {
-            if (playerEntity != otherEntity)
-            {
-                const auto collisionInfo = checkCollision(playerEntity, otherEntity);
-                if (collisionInfo && !shouldSkipCollision(playerEntity, otherCollidable))
-                {
-                    auto& playerTransformable = *playerEntity.component<Transformable>();
-                    playerTransformable.position += collisionInfo->collisionRange;
-                    playerCollidable.direction = collisionInfo->direction;
-                }
-                else if (!collisionInfo && shouldSkipCollision(playerEntity, otherCollidable))
-                {
-                    otherCollidable.spawner.reset();
-                }
-            }
+        es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable& otherCollidable) {
+            handleBlockingCollision(playerEntity, otherEntity);
+        });
+        es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable& otherCollidable) {
+            handleBlockingCollision(playerEntity, otherEntity);
+        });
+        es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable& otherCollidable) {
+            handleFlameCollision(playerEntity, otherEntity);
         });
     });
 }
@@ -51,7 +47,34 @@ void CollisionSystem::handleMoveChangeEvents()
     moveChangeEvents.clear();
 }
 
-bool CollisionSystem::shouldSkipCollision(const entityx::Entity& playerEntity, Collidable& otherCollidable) const
+void CollisionSystem::handleBlockingCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const
+{
+    const auto collisionInfo = checkCollision(playerEntity, otherEntity);
+    auto& playerCollidable = *playerEntity.component<Collidable>();
+    auto& otherCollidable = *otherEntity.component<Collidable>();
+
+    if (collisionInfo && !shouldSkipCollision(playerEntity, otherCollidable))
+    {
+        auto& playerTransformable = *playerEntity.component<Transformable>();
+        playerTransformable.position += collisionInfo->collisionRange;
+        playerCollidable.direction = collisionInfo->direction;
+    }
+    else if (!collisionInfo && shouldSkipCollision(playerEntity, otherCollidable))
+    {
+        otherCollidable.spawner.reset();
+    }
+}
+
+void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const
+{
+    const auto collisionInfo = checkCollision(playerEntity, otherEntity);
+    if (collisionInfo)
+    {
+        std::cout << "Flame collision" << std::endl;
+    }
+}
+
+bool CollisionSystem::shouldSkipCollision(const entityx::Entity& playerEntity, const Collidable& otherCollidable) const
 {
     return playerEntity == otherCollidable.spawner;
 }
