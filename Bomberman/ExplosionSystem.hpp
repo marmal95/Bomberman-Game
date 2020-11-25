@@ -7,6 +7,7 @@
 #include "ResourceHolder.hpp"
 #include "ResourceID.hpp"
 
+struct Map;
 
 class ExplosionSystem : public entityx::System<ExplosionSystem>, public entityx::Receiver<ExplosionSystem>
 {
@@ -19,7 +20,9 @@ public:
 private:
 	void handleSpawnBombEvents(entityx::EntityManager&);
 	void spawnBomb(entityx::EntityManager&, SpawnBombEvent&);
-	void spawnFlame(entityx::EntityManager&, const sf::Vector2f);
+	void spawnFlame(entityx::EntityManager&, const sf::Vector2f) const;
+	bool spawnFlameInRow(entityx::EntityManager&, const Map&, entityx::Entity, const sf::Vector2i, const int) const;
+	bool spawnFlameInCol(entityx::EntityManager&, const Map&, entityx::Entity, const sf::Vector2i, const int) const;
 
 	std::vector<SpawnBombEvent> spawnBombEvents;
 	const ResourceHolder<sf::Texture, ResourceID>& textures;

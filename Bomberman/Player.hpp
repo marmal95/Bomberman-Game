@@ -1,3 +1,6 @@
 #pragma once
 
-struct Player {};
+struct Player 
+{
+    int bombsNum{ 1 };
+};

@@ -91,7 +91,7 @@ void EcsGameplay::createPlayer()
     auto entity = entities.create();
     entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BombermanFront));
     entity.assign<Transformable>(Transformable{ { 30, 30 }, { 300, 300 } });
-    entity.assign<Movable>(Movable{ { 128, 128 }, Direction::None });
+    entity.assign<Movable>(Movable{ { 4*128, 4*128 }, Direction::None });
     entity.assign<Animated>(Animated{ 64, 128, 8, 1 });
     entity.assign<Collidable>();
     entity.assign<Player>();
