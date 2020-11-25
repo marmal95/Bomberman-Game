@@ -14,6 +14,8 @@
 #include "Constants.hpp"
 #include "SpawnBombEvent.hpp"
 #include "Map.hpp"
+#include <algorithm>
+#include <random>
 
 EcsGameplay::EcsGameplay(const GameplayStage & stage)
     : gameplayStage{ stage }
@@ -25,8 +27,8 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
     systems.add<ExplosionSystem>(gameplayStage.getTextures());
     systems.configure();
 
-    createMap();
     createPlayer();
+    createMap();
 }    
 
 bool EcsGameplay::update(const entityx::TimeDelta dt)
@@ -56,6 +58,7 @@ void EcsGameplay::handleEvent(sf::Event& event)
 void EcsGameplay::createMap()
 {
     Map map{};
+    std::vector<sf::Vector2i> blankTilesIndexes;
 
     for (int i = 0; i < HEIGHT_TILES_NUM; i++)
     {
@@ -76,21 +79,49 @@ void EcsGameplay::createMap()
                 tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BackgroundTile));
                 tile.assign<Tile>(Tile{ TileType::None });
                 map.tiles[i][j] = { TileType::None };
+                blankTilesIndexes.emplace_back(sf::Vector2i{ i, j });
             }
         }
     }
 
-
+    createExplodableBlocks(map, blankTilesIndexes);
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);
+}
+
+void EcsGameplay::createExplodableBlocks(Map& map, std::vector<sf::Vector2i>& blankTilesIndexes)
+{
+    const auto& playerPosition = (*entities.entities_with_components<Player>().begin()).component<Transformable>()->position;
+
+    auto rd = std::random_device{};
+    auto rng = std::default_random_engine{ rd() };
+    std::shuffle(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), rng);
+
+    auto playerPositionIndex = sf::Vector2i{ static_cast<int>(playerPosition.y / 64), static_cast<int>(playerPosition.x / 64) };
+    auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (70 / 100.f));
+    blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos, std::end(blankTilesIndexes));
+
+    for (const auto& blankTileIndex : blankTilesIndexes)
+    {
+        if (std::abs(blankTileIndex.x - playerPositionIndex.x) >= 3 ||
+            std::abs(blankTileIndex.y - playerPositionIndex.y) >= 3)
+        {
+            auto tile = entities.create();
+            tile.assign<Transformable>(Transformable{ { 64.f, 64.f }, { blankTileIndex.y * 64.f, blankTileIndex.x * 64.f } });
+            tile.assign<Collidable>();
+            tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::ExplodableBlock));
+            tile.assign<Tile>(Tile{ TileType::ExplodableBlock });
+            map.tiles[blankTileIndex.x][blankTileIndex.y] = { TileType::ExplodableBlock };
+        }
+    }
 }
 
 void EcsGameplay::createPlayer()
 {
     auto entity = entities.create();
     entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BombermanFront));
-    entity.assign<Transformable>(Transformable{ { 30, 30 }, { 300, 300 } });
+    entity.assign<Transformable>(Transformable{ { 30, 30 }, { 81, 81 } });
     entity.assign<Movable>(Movable{ { 4*128, 4*128 }, Direction::None });
     entity.assign<Animated>(Animated{ 64, 128, 8, 1 });
     entity.assign<Collidable>();

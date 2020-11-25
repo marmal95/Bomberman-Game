@@ -118,8 +118,9 @@ bool ExplosionSystem::spawnFlameInRow(entityx::EntityManager& es,const Map& map,
     if (auto rowIndex = bombIndex.y + i; rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
         map.tiles[rowIndex][bombIndex.x].tileType != TileType::SolidBlock)
     {
+        const auto isExplodable = map.tiles[rowIndex][bombIndex.x].tileType == TileType::ExplodableBlock;
         spawnFlame(es, { transformable.position.x, transformable.position.y + 64.f * i });
-        return true;
+        return !isExplodable;
     }
     return false;
 }
@@ -130,8 +131,9 @@ bool ExplosionSystem::spawnFlameInCol(entityx::EntityManager& es, const Map& map
     if (auto columnIndex = bombIndex.x - i; columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
         map.tiles[bombIndex.y][columnIndex].tileType != TileType::SolidBlock)
     {
+        const auto isExplodable = map.tiles[bombIndex.y][columnIndex].tileType == TileType::ExplodableBlock;
         spawnFlame(es, { transformable.position.x - 64.f * i, transformable.position.y });
-        return true;
+        return !isExplodable;
     }
     return false;
 }

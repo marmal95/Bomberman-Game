@@ -1,9 +1,11 @@
 #pragma once
 
 #include <entityx/entityx.h>
+#include <SFML/System/Vector2.hpp>
 #include "IGameStage.hpp"
 
 class GameplayStage;
+class Map;
 
 class EcsGameplay : public entityx::EntityX, public IGameStage
 {
@@ -21,6 +23,7 @@ public:
 
 private:
 	void createMap();
+	void createExplodableBlocks(Map&, std::vector<sf::Vector2i>&);
 	void createPlayer();
 
 	const GameplayStage& gameplayStage;

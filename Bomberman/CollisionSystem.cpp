@@ -4,6 +4,7 @@
 #include "Tile.hpp"
 #include "Bomb.hpp"
 #include "Flame.hpp"
+#include "Map.hpp"
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
@@ -20,6 +21,19 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
         });
         es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable& otherCollidable) {
             handleFlameCollision(playerEntity, otherEntity);
+        });
+    });
+
+    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+    es.each<Flame, Collidable>([&](entityx::Entity flameEntity, Flame& flame, Collidable& playerCollidable) {
+        es.each<Tile, Collidable, Transformable>([&](entityx::Entity tileEntity, Tile& tile, Collidable&, Transformable& tileTransformable) {
+            if (auto collisionInfo = checkCollision(flameEntity, tileEntity); collisionInfo)
+            {
+                const sf::Vector2i tileIndexPosition = { static_cast<int>(tileTransformable.position.y) / 64,
+                                                         static_cast<int>(tileTransformable.position.x) / 64 };
+                map.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
+                tileEntity.destroy();
+            }
         });
     });
 }
