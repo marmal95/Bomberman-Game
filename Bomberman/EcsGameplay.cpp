@@ -30,7 +30,8 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
     systems.add<DrawSystem>(gameplayStage.getTextures());
     systems.configure();
 
-    createPlayer();
+    createBomberman();
+    createCreep();
     createMap();
 }    
 
@@ -51,11 +52,19 @@ void EcsGameplay::draw(sf::RenderWindow&)
 
 void EcsGameplay::handleEvent(sf::Event& event)
 {
-    if (event.type == sf::Event::EventType::KeyReleased
-        && event.key.code == sf::Keyboard::Space)
+    if (event.type == sf::Event::EventType::KeyReleased)
     {
-        auto player = entities.entities_with_components<Player>().begin();
-        events.emit<SpawnBombEvent>({ *player });
+        if (event.key.code == sf::Keyboard::RControl)
+        {
+            auto player = entities.entities_with_components<Bomberman>().begin();
+            events.emit<SpawnBombEvent>({ *player });
+        }
+
+        if (event.key.code == sf::Keyboard::LControl)
+        {
+            auto player = entities.entities_with_components<Creep>().begin();
+            events.emit<SpawnBombEvent>({ *player });
+        }
     }
 }
 
@@ -95,20 +104,24 @@ void EcsGameplay::createMap()
 
 void EcsGameplay::createExplodableBlocks(Map& map, std::vector<sf::Vector2i>& blankTilesIndexes)
 {
-    const auto& playerPosition = (*entities.entities_with_components<Player>().begin()).component<Transformable>()->position;
+    const auto& bombermanPosition = (*entities.entities_with_components<Bomberman>().begin()).component<Transformable>()->position;
+    const auto& creepPosition = (*entities.entities_with_components<Creep>().begin()).component<Transformable>()->position;
 
     auto rd = std::random_device{};
     auto rng = std::default_random_engine{ rd() };
     std::shuffle(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), rng);
 
-    auto playerPositionIndex = sf::Vector2i{ static_cast<int>(playerPosition.y / 64), static_cast<int>(playerPosition.x / 64) };
+    auto bombermanPositionIndex = sf::Vector2i{ static_cast<int>(bombermanPosition.y / 64), static_cast<int>(bombermanPosition.x / 64) };
+    auto creepPositionIndex = sf::Vector2i{ static_cast<int>(creepPosition.y) / 64, static_cast<int>(creepPosition.x) / 64 };
     auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (70 / 100.f));
     blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos, std::end(blankTilesIndexes));
 
     for (const auto& blankTileIndex : blankTilesIndexes)
     {
-        if (std::abs(blankTileIndex.x - playerPositionIndex.x) >= 3 ||
-            std::abs(blankTileIndex.y - playerPositionIndex.y) >= 3)
+        if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >= 2 ||
+            std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= 2) &&
+            (std::abs(blankTileIndex.x - creepPositionIndex.x) >= 2 ||
+            std::abs(blankTileIndex.y - creepPositionIndex.y) >= 2))
         {
             events.emit<SpawnTileEvent>(SpawnTileEvent{ { blankTileIndex.y * 64.f, blankTileIndex.x * 64.f }, TileType::ExplodableBlock });
             map.tiles[blankTileIndex.x][blankTileIndex.y] = { TileType::ExplodableBlock };
@@ -116,7 +129,7 @@ void EcsGameplay::createExplodableBlocks(Map& map, std::vector<sf::Vector2i>& bl
     }
 }
 
-void EcsGameplay::createPlayer()
+void EcsGameplay::createBomberman()
 {
     auto entity = entities.create();
     entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BombermanFront));
@@ -125,5 +138,19 @@ void EcsGameplay::createPlayer()
     entity.assign<Animated>(Animated{ 64, 128, 8, 1 });
     entity.assign<Collidable>();
     entity.assign<Player>();
+    entity.assign<Bomberman>();
+    events.emit<MoveChangeEvent>({ entity, Direction::None });
+}
+
+void EcsGameplay::createCreep()
+{
+    auto entity = entities.create();
+    entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::CreepFront));
+    entity.assign<Transformable>(Transformable{ { 30, 30 }, { 1216 + 17, 1280 - 64 + 17 } });
+    entity.assign<Movable>(Movable{ { 64, 64 }, Direction::None });
+    entity.assign<Animated>(Animated{ 64, 64, 6, 1 });
+    entity.assign<Collidable>();
+    entity.assign<Player>();
+    entity.assign<Creep>();
     events.emit<MoveChangeEvent>({ entity, Direction::None });
 }

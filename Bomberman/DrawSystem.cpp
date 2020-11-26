@@ -66,16 +66,36 @@ void DrawSystem::handleMoveChangeEvents()
 {
     for (auto& event : moveChangeEvents)
     {
-        auto drawable = event.entity.component<Drawable>();
-        switch (event.direction)
-        {
-        case Direction::Left: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanLeft)); break;
-        case Direction::Right: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanRight)); break;
-        case Direction::Up: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanBack)); break;
-        case Direction::Down: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanFront)); break;
-        }
+        if (event.entity.has_component<Bomberman>())
+            handleBombermanMoveChangeEvent(event);
+        if (event.entity.has_component<Creep>())
+            handleCreepMoveChangeEvent(event);
     }
     moveChangeEvents.clear();
+}
+
+void DrawSystem::handleBombermanMoveChangeEvent(MoveChangeEvent& event)
+{
+    auto drawable = event.entity.component<Drawable>();
+    switch (event.direction)
+    {
+    case Direction::Left: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanLeft)); break;
+    case Direction::Right: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanRight)); break;
+    case Direction::Up: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanBack)); break;
+    case Direction::Down: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanFront)); break;
+    }
+}
+
+void DrawSystem::handleCreepMoveChangeEvent(MoveChangeEvent& event)
+{
+    auto drawable = event.entity.component<Drawable>();
+    switch (event.direction)
+    {
+    case Direction::Left: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepLeft)); break;
+    case Direction::Right: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepRight)); break;
+    case Direction::Up: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepBack)); break;
+    case Direction::Down: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepFront)); break;
+    }
 }
 
 void DrawSystem::drawEntity(Drawable& drawable, Transformable& transformable, sf::RenderWindow& window)

@@ -88,8 +88,9 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
 {
     std::uniform_int_distribution<> dist(0, 100);
     const int powerUpProbability = 25;
-
-    if (dist(generator) <= 25)
+    const auto temp = dist(generator);
+    std::cout << temp << std::endl;
+    if (temp <= 25)
     {
         dist = std::uniform_int_distribution<>(0, static_cast<int>(PowerUpType::Count) - 1);
         PowerUpType powerUpType{ dist(generator) };

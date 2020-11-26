@@ -24,7 +24,8 @@ public:
 private:
 	void createMap();
 	void createExplodableBlocks(Map&, std::vector<sf::Vector2i>&);
-	void createPlayer();
+	void createBomberman();
+	void createCreep();
 
 	const GameplayStage& gameplayStage;
 };

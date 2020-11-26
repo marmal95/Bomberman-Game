@@ -47,6 +47,10 @@ void GameplayStage::loadResources()
     textures.load(ResourceID::BombermanFront, "resources/Bomberman/Bomberman_Front.png");
     textures.load(ResourceID::BombermanLeft, "resources/Bomberman/Bomberman_Left.png");
     textures.load(ResourceID::BombermanRight, "resources/Bomberman/Bomberman_Right.png");
+    textures.load(ResourceID::CreepBack, "resources/Creep/Creep_Back.png");
+    textures.load(ResourceID::CreepFront, "resources/Creep/Creep_Front.png");
+    textures.load(ResourceID::CreepLeft, "resources/Creep/Creep_Left.png");
+    textures.load(ResourceID::CreepRight, "resources/Creep/Creep_Right.png");
     textures.load(ResourceID::Bomb, "resources/Bomb/Bomb.png");
     textures.load(ResourceID::Flame, "resources/Flame/Flame.png");
     textures.load(ResourceID::BombPowerUp, "resources/Powerups/BombPowerup.png");

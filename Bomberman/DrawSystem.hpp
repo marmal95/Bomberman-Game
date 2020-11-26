@@ -24,6 +24,8 @@ public:
 
 private:
     void handleMoveChangeEvents();
+    void handleBombermanMoveChangeEvent(MoveChangeEvent&);
+    void handleCreepMoveChangeEvent(MoveChangeEvent&);
     void drawEntity(Drawable&, Transformable&, sf::RenderWindow&);
 
     const ResourceHolder<sf::Texture, ResourceID>& textures;
