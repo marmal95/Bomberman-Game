@@ -4,7 +4,7 @@
 #include "AnimateSystem.hpp"
 #include "CollisionSystem.hpp"
 #include "ExplosionSystem.hpp"
-#include "PowerUpSystem.hpp"
+#include "SpawnSystem.hpp"
 #include "GameplayStage.hpp"
 #include "Transformable.hpp"
 #include "Drawable.hpp"
@@ -14,6 +14,7 @@
 #include "Collidable.hpp"
 #include "Constants.hpp"
 #include "SpawnBombEvent.hpp"
+#include "SpawnTileEvent.hpp"
 #include "Map.hpp"
 #include <algorithm>
 #include <random>
@@ -21,12 +22,12 @@
 EcsGameplay::EcsGameplay(const GameplayStage & stage)
     : gameplayStage{ stage }
 {
+    systems.add<SpawnSystem>(gameplayStage.getTextures());
     systems.add<MoveSystem>();
-    systems.add<DrawSystem>(gameplayStage.getTextures());
-    systems.add<AnimateSystem>();
     systems.add<CollisionSystem>();
-    systems.add<ExplosionSystem>(gameplayStage.getTextures());
-    systems.add<PowerUpSystem>(gameplayStage.getTextures());
+    systems.add<ExplosionSystem>();
+    systems.add<AnimateSystem>();
+    systems.add<DrawSystem>(gameplayStage.getTextures());
     systems.configure();
 
     createPlayer();
@@ -35,11 +36,11 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
 
 bool EcsGameplay::update(const entityx::TimeDelta dt)
 {
+    systems.update<SpawnSystem>(dt);
     systems.update<MoveSystem>(dt);
+    systems.update<CollisionSystem>(dt);
     systems.update<ExplosionSystem>(dt);
     systems.update<AnimateSystem>(dt);
-    systems.update<CollisionSystem>(dt);
-    systems.update<PowerUpSystem>(dt);
     return true;
 }
 
@@ -67,23 +68,22 @@ void EcsGameplay::createMap()
     {
         for (int j = 0; j < WIDTH_TILES_NUM; j++)
         {
-            auto tile = entities.create();
-            tile.assign<Transformable>(Transformable{ { 64.f, 64.f }, { j * 64.f, i * 64.f } });
+            SpawnTileEvent event{};
+            event.position = { j * 64.f, i * 64.f };
 
             if (i == 0 || i == 20 || j == 0 || j == 20 || i % 2 == 0 && j % 2 == 0)
             {
-                tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::SolidBlock));
-                tile.assign<Collidable>();
-                tile.assign<Tile>(Tile{ TileType::SolidBlock });
+                event.tileType = TileType::SolidBlock;
                 map.tiles[i][j] = { TileType::SolidBlock };
             }
             else
             {
-                tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BackgroundTile));
-                tile.assign<Tile>(Tile{ TileType::None });
+                event.tileType = TileType::None;
                 map.tiles[i][j] = { TileType::None };
                 blankTilesIndexes.emplace_back(sf::Vector2i{ i, j });
             }
+
+            events.emit<SpawnTileEvent>(std::move(event));
         }
     }
 
@@ -110,11 +110,7 @@ void EcsGameplay::createExplodableBlocks(Map& map, std::vector<sf::Vector2i>& bl
         if (std::abs(blankTileIndex.x - playerPositionIndex.x) >= 3 ||
             std::abs(blankTileIndex.y - playerPositionIndex.y) >= 3)
         {
-            auto tile = entities.create();
-            tile.assign<Transformable>(Transformable{ { 64.f, 64.f }, { blankTileIndex.y * 64.f, blankTileIndex.x * 64.f } });
-            tile.assign<Collidable>();
-            tile.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::ExplodableBlock));
-            tile.assign<Tile>(Tile{ TileType::ExplodableBlock });
+            events.emit<SpawnTileEvent>(SpawnTileEvent{ { blankTileIndex.y * 64.f, blankTileIndex.x * 64.f }, TileType::ExplodableBlock });
             map.tiles[blankTileIndex.x][blankTileIndex.y] = { TileType::ExplodableBlock };
         }
     }

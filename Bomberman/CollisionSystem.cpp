@@ -10,8 +10,6 @@
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
 {
-    handleMoveChangeEvents();
-
     es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player&, Collidable& playerCollidable) {
         playerCollidable.direction = Direction::None;
         es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable& otherCollidable) {
@@ -38,29 +36,6 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
             }
         });
     });
-}
-
-void CollisionSystem::configure(entityx::EventManager& events)
-{
-    events.subscribe<MoveChangeEvent>(*this);
-}
-
-void CollisionSystem::receive(const MoveChangeEvent& event)
-{
-    moveChangeEvents.push_back(event);
-}
-
-void CollisionSystem::handleMoveChangeEvents()
-{
-    for (auto& event : moveChangeEvents)
-    {
-        if (event.entity.has_component<Collidable>())
-        {
-            auto collidable = event.entity.component<Collidable>();
-            *collidable = Collidable{ collidable->spawner };
-        }
-    }
-    moveChangeEvents.clear();
 }
 
 void CollisionSystem::handleBlockingCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const
@@ -105,7 +80,7 @@ std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity pla
     const auto dx = (playerTransformable.position.x + 0.5f * playerTransformable.size.x) - (otherTransformable.position.x + 0.5f * otherTransformable.size.x);
     const auto dy = (playerTransformable.position.y + 0.5f * playerTransformable.size.y) - (otherTransformable.position.y + 0.5f * otherTransformable.size.y);
 
-    if (abs(dx) <= w && abs(dy) <= h)
+    if (abs(dx) < w && abs(dy) < h)
     {
         const auto wy = w * dy;
         const auto hx = h * dx;
@@ -113,7 +88,9 @@ std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity pla
         if (wy > hx)
         {
             if (wy > -hx)
+            {
                 return CollisionInfo{ { 0, h - abs(dy) }, Direction::Up };
+            }
             else
                 return CollisionInfo{ { -(w - abs(dx)), 0 }, Direction::Right };
         }

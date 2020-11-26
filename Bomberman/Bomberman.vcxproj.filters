@@ -54,7 +54,7 @@
     <ClCompile Include="ExplosionSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PowerUpSystem.cpp">
+    <ClCompile Include="SpawnSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,10 +146,19 @@
     <ClInclude Include="Flame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerUpSystem.hpp">
+    <ClInclude Include="SpawnPowerUpEvent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnPowerUpEvent.hpp">
+    <ClInclude Include="SpawnSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnFlameEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnTileEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUpType.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
