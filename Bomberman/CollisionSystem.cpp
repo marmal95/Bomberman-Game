@@ -5,6 +5,7 @@
 #include "Bomb.hpp"
 #include "Flame.hpp"
 #include "Map.hpp"
+#include "SpawnPowerUpEvent.hpp"
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
@@ -32,6 +33,7 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
                 const sf::Vector2i tileIndexPosition = { static_cast<int>(tileTransformable.position.y) / 64,
                                                          static_cast<int>(tileTransformable.position.x) / 64 };
                 map.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
+                events.emit<SpawnPowerUpEvent>(SpawnPowerUpEvent{ tileTransformable.position });
                 tileEntity.destroy();
             }
         });

@@ -4,6 +4,7 @@
 #include "AnimateSystem.hpp"
 #include "CollisionSystem.hpp"
 #include "ExplosionSystem.hpp"
+#include "PowerUpSystem.hpp"
 #include "GameplayStage.hpp"
 #include "Transformable.hpp"
 #include "Drawable.hpp"
@@ -25,6 +26,7 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
     systems.add<AnimateSystem>();
     systems.add<CollisionSystem>();
     systems.add<ExplosionSystem>(gameplayStage.getTextures());
+    systems.add<PowerUpSystem>(gameplayStage.getTextures());
     systems.configure();
 
     createPlayer();
@@ -37,6 +39,7 @@ bool EcsGameplay::update(const entityx::TimeDelta dt)
     systems.update<ExplosionSystem>(dt);
     systems.update<AnimateSystem>(dt);
     systems.update<CollisionSystem>(dt);
+    systems.update<PowerUpSystem>(dt);
     return true;
 }
 

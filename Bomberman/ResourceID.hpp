@@ -19,5 +19,8 @@ enum class ResourceID
     BombermanLeft,
     BombermanRight,
     Bomb,
-    Flame
+    Flame,
+    BombPowerUp,
+    FlamePowerUp,
+    SpeedPowerUp
 };

@@ -156,6 +156,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuStage.cpp" />
     <ClCompile Include="MoveSystem.cpp" />
+    <ClCompile Include="PowerUpSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animated.hpp" />
@@ -181,10 +182,12 @@
     <ClInclude Include="MoveChangeEvent.hpp" />
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="PowerUpSystem.hpp" />
     <ClInclude Include="ResourceHolder.hpp" />
     <ClInclude Include="ResourceID.hpp" />
     <ClInclude Include="ResourceManager.hpp" />
     <ClInclude Include="SpawnBombEvent.hpp" />
+    <ClInclude Include="SpawnPowerUpEvent.hpp" />
     <ClInclude Include="Tile.hpp" />
     <ClInclude Include="Transformable.hpp" />
   </ItemGroup>
