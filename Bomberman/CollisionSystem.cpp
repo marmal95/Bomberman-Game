@@ -10,22 +10,29 @@
 #include "Movable.hpp"
 
 
-void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
+void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
-    es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player&, Collidable& playerCollidable) {
+    es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player& player, Collidable& playerCollidable) {
         playerCollidable.direction = Direction::None;
+
         es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
             handleBlockingCollision(playerEntity, otherEntity);
         });
         es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable&) {
             handleBlockingCollision(playerEntity, otherEntity);
         });
-        es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
-            handleFlameCollision(playerEntity, otherEntity);
-        });
         es.each<PowerUp, Collidable>([&](entityx::Entity otherEntity, PowerUp&, Collidable&) {
             handlePowerUpCollision(playerEntity, otherEntity);
         });
+
+        if (player.immortalTime <= 0)
+        {
+            es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
+                handleFlameCollision(playerEntity, otherEntity);
+            });
+        }
+        else
+            player.immortalTime -= dt;
     });
 
     auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
@@ -66,7 +73,11 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
     const auto collisionInfo = checkCollision(playerEntity, otherEntity);
     if (collisionInfo)
     {
-        std::cout << "Flame collision" << std::endl;
+        auto& player = *playerEntity.component<Player>();
+        player.health--;
+        player.immortalTime = 3;
+
+        std::cout << "Health: " << player.health << std::endl;
     }
 }
 
