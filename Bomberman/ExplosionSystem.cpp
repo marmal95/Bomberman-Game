@@ -30,25 +30,25 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
             const sf::Vector2i bombIndex = { static_cast<int>(transformable.position.x) / 64,
                                              static_cast<int>(transformable.position.y) / 64 };
 
-            for (int i = 0; i < bomb.range; i++)
+            for (int i = 1; i <= bomb.range; i++)
             {
                 if (!spawnFlameInRow(es, events, map, entity, bombIndex, i))
                     break;
             }
 
-            for (int i = 0; i > -bomb.range; i--)
+            for (int i = 0; i >= -bomb.range; i--)
             {
                 if (!spawnFlameInRow(es, events, map, entity, bombIndex, i))
                     break;
             }
 
-            for (int i = 0; i < bomb.range; i++)
+            for (int i = 1; i <= bomb.range; i++)
             {
                 if (!spawnFlameInCol(es,events, map, entity, bombIndex, i))
                     break;
             }
 
-            for (int i = 0; i > -bomb.range; i--)
+            for (int i = 0; i >= -bomb.range; i--)
             {
                 if (!spawnFlameInCol(es, events, map, entity, bombIndex, i))
                     break;

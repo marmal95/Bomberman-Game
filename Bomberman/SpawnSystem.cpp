@@ -7,6 +7,7 @@
 #include "Player.hpp"
 #include "Transformable.hpp"
 #include "SpawnSystem.hpp"
+#include "PowerUp.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }, generator{ std::random_device{}() }, spawnPowerUpEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnTilesEvents{}
@@ -90,10 +91,12 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
 
     if (dist(generator) <= 25)
     {
-        dist = std::uniform_int_distribution<>(0, static_cast<int>(PowerUpType::Count));
+        dist = std::uniform_int_distribution<>(0, static_cast<int>(PowerUpType::Count) - 1);
+        PowerUpType powerUpType{ dist(generator) };
 
         auto powerUpEntity = es.create();
-        powerUpEntity.assign<Drawable>(getPowerUpTexture(PowerUpType{ dist(generator) }));
+        powerUpEntity.assign<PowerUp>(PowerUp{ powerUpType });
+        powerUpEntity.assign<Drawable>(getPowerUpTexture(powerUpType));
         powerUpEntity.assign<Collidable>();
         powerUpEntity.assign<Transformable>(Transformable{ { 32, 32 }, { event.position.x + 16, event.position.y + 16 } });
     }
@@ -101,6 +104,7 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
 
 void SpawnSystem::spawnBomb(entityx::EntityManager& es, const SpawnBombEvent& event) const
 {
+    const auto player = event.player.component<const Player>();
     auto playerPosition = event.player.component<const Transformable>()->position;
     playerPosition.x = static_cast<int>(playerPosition.x + 15) / 64 * 64 + 8;
     playerPosition.y = static_cast<int>(playerPosition.y + 15) / 64 * 64 + 8;
@@ -109,7 +113,7 @@ void SpawnSystem::spawnBomb(entityx::EntityManager& es, const SpawnBombEvent& ev
     bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
     bomb.assign<Transformable>(Transformable{ { 48, 48 }, playerPosition });
     bomb.assign<Animated>(48, 48, 3, 0.1);
-    bomb.assign<Bomb>(Bomb{ event.player, 3, 4 });
+    bomb.assign<Bomb>(Bomb{ event.player, 3, player->bombsRange });
     bomb.assign<Collidable>(Collidable{ event.player });
 }
 

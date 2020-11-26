@@ -161,5 +161,8 @@
     <ClInclude Include="PowerUpType.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PowerUp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

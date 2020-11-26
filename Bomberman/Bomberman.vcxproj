@@ -182,6 +182,7 @@
     <ClInclude Include="MoveChangeEvent.hpp" />
     <ClInclude Include="MoveSystem.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="PowerUp.hpp" />
     <ClInclude Include="PowerUpType.hpp" />
     <ClInclude Include="SpawnFlameEvent.hpp" />
     <ClInclude Include="SpawnSystem.hpp" />

@@ -6,20 +6,25 @@
 #include "Flame.hpp"
 #include "Map.hpp"
 #include "SpawnPowerUpEvent.hpp"
+#include "PowerUp.hpp"
+#include "Movable.hpp"
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta)
 {
     es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player&, Collidable& playerCollidable) {
         playerCollidable.direction = Direction::None;
-        es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable& otherCollidable) {
+        es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
             handleBlockingCollision(playerEntity, otherEntity);
         });
-        es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable& otherCollidable) {
+        es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable&) {
             handleBlockingCollision(playerEntity, otherEntity);
         });
-        es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable& otherCollidable) {
+        es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
             handleFlameCollision(playerEntity, otherEntity);
+        });
+        es.each<PowerUp, Collidable>([&](entityx::Entity otherEntity, PowerUp&, Collidable&) {
+            handlePowerUpCollision(playerEntity, otherEntity);
         });
     });
 
@@ -62,6 +67,32 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
     if (collisionInfo)
     {
         std::cout << "Flame collision" << std::endl;
+    }
+}
+
+void CollisionSystem::handlePowerUpCollision(entityx::Entity playerEntity, entityx::Entity powerUpEntity) const
+{
+    const auto collisionInfo = checkCollision(playerEntity, powerUpEntity);
+    if (collisionInfo)
+    {
+        auto& player = *playerEntity.component<Player>();
+        auto& playerMovable = *playerEntity.component<Movable>();
+        const auto& powerUp = *powerUpEntity.component<PowerUp>();
+
+        switch (powerUp.type)
+        {
+        case PowerUpType::Bomb:
+            player.bombsNum++;
+            break;
+        case PowerUpType::Flame:
+            player.bombsRange++;
+            break;
+        case PowerUpType::Speed:
+            playerMovable.velocity *= 1.2f;
+            break;
+        }
+
+        powerUpEntity.destroy();
     }
 }
 
