@@ -15,37 +15,56 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
     es.each<Player, Collidable>([&](entityx::Entity playerEntity, Player& player, Collidable& playerCollidable) {
         playerCollidable.direction = Direction::None;
 
-        es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
-            handleBlockingCollision(playerEntity, otherEntity);
-        });
-        es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable&) {
-            handleBlockingCollision(playerEntity, otherEntity);
-        });
-        es.each<PowerUp, Collidable>([&](entityx::Entity otherEntity, PowerUp&, Collidable&) {
-            handlePowerUpCollision(playerEntity, otherEntity);
-        });
-
-        if (player.immortalTime <= 0)
-        {
-            es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
-                handleFlameCollision(playerEntity, otherEntity);
-            });
-        }
-        else
-            player.immortalTime -= dt;
+        handlePlayerTilesCollisions(playerEntity, es);
+        handlePlayerBombsCollisions(playerEntity, es);
+        handlePlayerPowerUpsCollisions(playerEntity, es);
+        handlePlayerFlamesCollisions(playerEntity, es, dt);
+        handleTilesFlamesCollisions(es, events);
     });
+}
 
+void CollisionSystem::handlePlayerTilesCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
+{
+    es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
+        handleBlockingCollision(playerEntity, otherEntity);
+    });
+}
+
+void CollisionSystem::handlePlayerBombsCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
+{
+    es.each<Bomb, Collidable>([&](entityx::Entity otherEntity, Bomb&, Collidable&) {
+        handleBlockingCollision(playerEntity, otherEntity);
+    });
+}
+
+void CollisionSystem::handlePlayerPowerUpsCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
+{
+    es.each<PowerUp, Collidable>([&](entityx::Entity otherEntity, PowerUp&, Collidable&) {
+        handlePowerUpCollision(playerEntity, otherEntity);
+    });
+}
+
+void CollisionSystem::handlePlayerFlamesCollisions(entityx::Entity playerEntity, entityx::EntityManager& es, const entityx::TimeDelta dt) const
+{
+    auto& player = *playerEntity.component<Player>();
+
+    if (player.immortalTime > 0)
+    {
+        player.immortalTime -= dt;
+        return;
+    }
+
+    es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
+        handleFlameCollision(playerEntity, otherEntity, dt);
+    });
+}
+
+void CollisionSystem::handleTilesFlamesCollisions(entityx::EntityManager& es, entityx::EventManager& events) const
+{
     auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
     es.each<Flame, Collidable>([&](entityx::Entity flameEntity, Flame& flame, Collidable& playerCollidable) {
         es.each<Tile, Collidable, Transformable>([&](entityx::Entity tileEntity, Tile& tile, Collidable&, Transformable& tileTransformable) {
-            if (auto collisionInfo = checkCollision(flameEntity, tileEntity); collisionInfo)
-            {
-                const sf::Vector2i tileIndexPosition = { static_cast<int>(tileTransformable.position.y) / 64,
-                                                         static_cast<int>(tileTransformable.position.x) / 64 };
-                map.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
-                events.emit<SpawnPowerUpEvent>(SpawnPowerUpEvent{ tileTransformable.position });
-                tileEntity.destroy();
-            }
+            handleTileFlameCollision(flameEntity, tileEntity, es, events);
         });
     });
 }
@@ -68,7 +87,7 @@ void CollisionSystem::handleBlockingCollision(entityx::Entity playerEntity, enti
     }
 }
 
-void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const
+void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx::Entity otherEntity, const entityx::TimeDelta dt) const
 {
     const auto collisionInfo = checkCollision(playerEntity, otherEntity);
     if (collisionInfo)
@@ -104,6 +123,21 @@ void CollisionSystem::handlePowerUpCollision(entityx::Entity playerEntity, entit
         }
 
         powerUpEntity.destroy();
+    }
+}
+
+void CollisionSystem::handleTileFlameCollision(entityx::Entity flameEntity, entityx::Entity tileEntity, entityx::EntityManager& es, entityx::EventManager& events) const
+{
+    const auto& tileTransformable = *tileEntity.component<Transformable>();
+    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+
+    if (auto collisionInfo = checkCollision(flameEntity, tileEntity); collisionInfo)
+    {
+        const sf::Vector2i tileIndexPosition = { static_cast<int>(tileTransformable.position.y) / 64,
+                                                 static_cast<int>(tileTransformable.position.x) / 64 };
+        map.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
+        events.emit<SpawnPowerUpEvent>(SpawnPowerUpEvent{ tileTransformable.position });
+        tileEntity.destroy();
     }
 }
 
