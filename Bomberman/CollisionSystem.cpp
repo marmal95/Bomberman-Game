@@ -49,10 +49,7 @@ void CollisionSystem::handlePlayerFlamesCollisions(entityx::Entity playerEntity,
     auto& player = *playerEntity.component<Player>();
 
     if (player.immortalTime > 0)
-    {
         player.immortalTime -= dt;
-        return;
-    }
 
     es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
         handleFlameCollision(playerEntity, otherEntity, dt);
@@ -89,14 +86,12 @@ void CollisionSystem::handleBlockingCollision(entityx::Entity playerEntity, enti
 
 void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx::Entity otherEntity, const entityx::TimeDelta dt) const
 {
+    auto& player = *playerEntity.component<Player>();
     const auto collisionInfo = checkCollision(playerEntity, otherEntity);
-    if (collisionInfo)
+    if (collisionInfo && !player.immortalTime > 0)
     {
-        auto& player = *playerEntity.component<Player>();
         player.health--;
         player.immortalTime = 3;
-
-        std::cout << "Health: " << player.health << std::endl;
     }
 }
 

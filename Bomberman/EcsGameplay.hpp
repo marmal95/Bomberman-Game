@@ -26,6 +26,7 @@ private:
 	void createExplodableBlocks(Map&, std::vector<sf::Vector2i>&);
 	void createBomberman();
 	void createCreep();
+	void checkIsGameOver();
 
 	const GameplayStage& gameplayStage;
 };

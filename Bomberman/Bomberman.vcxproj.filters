@@ -164,5 +164,8 @@
     <ClInclude Include="Player.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameResult.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

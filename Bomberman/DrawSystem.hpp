@@ -8,6 +8,7 @@
 
 struct Drawable;
 struct Transformable;
+struct Player;
 
 namespace sf
 {
@@ -26,7 +27,10 @@ private:
     void handleMoveChangeEvents();
     void handleBombermanMoveChangeEvent(MoveChangeEvent&);
     void handleCreepMoveChangeEvent(MoveChangeEvent&);
-    void drawEntity(Drawable&, Transformable&, sf::RenderWindow&);
+
+    void drawPlayers(entityx::EntityManager&) const;
+    void drawEntity(entityx::Entity, Drawable&, Transformable&, sf::RenderWindow&) const;
+    void changeOpacity(Drawable&, const Player&) const;
 
     const ResourceHolder<sf::Texture, ResourceID>& textures;
     std::vector<MoveChangeEvent> moveChangeEvents;

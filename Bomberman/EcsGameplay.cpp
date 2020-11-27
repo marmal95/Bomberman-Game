@@ -16,8 +16,11 @@
 #include "SpawnBombEvent.hpp"
 #include "SpawnTileEvent.hpp"
 #include "Map.hpp"
+#include "GameResult.hpp"
+#include "ExitStage.hpp"
 #include <algorithm>
 #include <random>
+#include <memory>
 
 EcsGameplay::EcsGameplay(const GameplayStage & stage)
     : gameplayStage{ stage }
@@ -42,6 +45,7 @@ bool EcsGameplay::update(const entityx::TimeDelta dt)
     systems.update<CollisionSystem>(dt);
     systems.update<ExplosionSystem>(dt);
     systems.update<AnimateSystem>(dt);
+    checkIsGameOver();
     return true;
 }
 
@@ -153,4 +157,21 @@ void EcsGameplay::createCreep()
     entity.assign<Player>();
     entity.assign<Creep>();
     events.emit<MoveChangeEvent>({ entity, Direction::None });
+}
+
+void EcsGameplay::checkIsGameOver()
+{
+    GameResult gameResult{};
+    const auto bomberman = (*entities.entities_with_components<Player, Bomberman>().begin()).component<Player>();
+    const auto creep = (*entities.entities_with_components<Player, Creep>().begin()).component<Player>();
+
+    if (!bomberman->health && !creep->health)
+        gameResult = GameResult::Draw;
+    else if (!bomberman->health)
+        gameResult = GameResult::CreepWon;
+    else if (!creep->health)
+        gameResult = GameResult::BombermanWon;
+    else return;
+
+    GameStage::changeStage(std::make_unique<ExitStage>(gameResult));
 }

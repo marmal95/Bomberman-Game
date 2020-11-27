@@ -20,36 +20,10 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
     auto& window = ResourcesManager::getInstance().window;
     es.each<Transformable, Drawable>([&](entityx::Entity entity, Transformable& transformable, Drawable& drawable)
     {
-        drawEntity(drawable, transformable, window);
-
-#ifdef _DEBUG
-        if (entity.has_component<Collidable>())
-        {
-            sf::RectangleShape shape{};
-            shape.setPosition(transformable.position);
-            shape.setOrigin(drawable.sprite.getOrigin());
-            shape.setFillColor({ 255, 0, 0, 128 });
-            shape.setSize(transformable.size);
-            window.draw(shape);
-        }
-#endif
+        drawEntity(entity, drawable, transformable, window);
     });
 
-    es.each<Player, Transformable, Drawable>([&](entityx::Entity entity, Player& player, Transformable& transformable, Drawable& drawable)
-    {
-        drawEntity(drawable, transformable, window);
-#ifdef _DEBUG
-        if (entity.has_component<Collidable>())
-        {
-            sf::RectangleShape shape{};
-            shape.setPosition(transformable.position);
-            shape.setOrigin(drawable.sprite.getOrigin());
-            shape.setFillColor({ 255, 0, 0, 128 });
-            shape.setSize(transformable.size);
-            window.draw(shape);
-        }
-#endif
-    });
+    drawPlayers(es);
 }
 
 void DrawSystem::configure(entityx::EventManager& events)
@@ -98,9 +72,57 @@ void DrawSystem::handleCreepMoveChangeEvent(MoveChangeEvent& event)
     }
 }
 
-void DrawSystem::drawEntity(Drawable& drawable, Transformable& transformable, sf::RenderWindow& window)
+void DrawSystem::drawPlayers(entityx::EntityManager& es) const
 {
+    auto& window = ResourcesManager::getInstance().window;
+
+    auto bomberman = (*es.entities_with_components<Bomberman>().begin());
+    auto& bombermanPlayer = *bomberman.component<Player>();
+    auto& bombermanTransformable = *bomberman.component<Transformable>();
+    auto& bombermanDrawable = *bomberman.component<Drawable>();
+
+    auto creep = (*es.entities_with_components<Creep>().begin());
+    auto& creepPlayer = *creep.component<Player>();
+    auto& creepTransformable = *creep.component<Transformable>();
+    auto& creepDrawable = *creep.component<Drawable>();
+
+    changeOpacity(bombermanDrawable, bombermanPlayer);
+    changeOpacity(creepDrawable, creepPlayer);
+
+    if (bombermanTransformable.position.y < creepTransformable.position.y)
+    {
+        drawEntity(bomberman, bombermanDrawable, bombermanTransformable, window);
+        drawEntity(creep, creepDrawable, creepTransformable, window);
+    }
+    else
+    {
+        drawEntity(creep, creepDrawable, creepTransformable, window);
+        drawEntity(bomberman, bombermanDrawable, bombermanTransformable, window);
+    }
+}
+
+void DrawSystem::drawEntity(entityx::Entity entity, Drawable& drawable, Transformable& transformable, sf::RenderWindow& window) const
+{
+#ifdef _DEBUG
+    if (entity.has_component<Collidable>())
+    {
+        sf::RectangleShape shape{};
+        shape.setPosition(transformable.position);
+        shape.setOrigin(drawable.sprite.getOrigin());
+        shape.setFillColor({ 255, 0, 0, 128 });
+        shape.setSize(transformable.size);
+        window.draw(shape);
+    }
+#endif
     drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
-                                transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
+        transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
     window.draw(drawable.sprite);
+}
+
+void DrawSystem::changeOpacity(Drawable& drawable, const Player& player) const
+{
+    if (player.immortalTime > 0)
+        drawable.sprite.setColor(sf::Color(255, 255, 255, 128));
+    else
+        drawable.sprite.setColor(sf::Color(255, 255, 255, 255));
 }
