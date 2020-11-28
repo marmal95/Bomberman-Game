@@ -43,8 +43,12 @@ void ExitStage::handleEvent(sf::Event& event)
 
 void ExitStage::resizeWindow() const
 {
-    ResourcesManager::getInstance().window.setSize(sf::Vector2u(576, 576));
-    ResourcesManager::getInstance().window.setView(sf::View(sf::FloatRect(0, 0, 576, 576)));
+    const auto desktopMode = sf::VideoMode::getDesktopMode();
+    auto& window = ResourcesManager::getInstance().window;
+    window.setSize(sf::Vector2u(576, 576));
+    window.setView(sf::View(sf::FloatRect(0, 0, 576, 576)));
+    window.setPosition({ static_cast<int>(desktopMode.width - window.getSize().x) / 2,
+                         static_cast<int>(desktopMode.height - window.getSize().y) / 2 });
 }
 
 void ExitStage::loadResources()
