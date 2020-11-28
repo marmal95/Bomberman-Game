@@ -174,7 +174,7 @@
     <ClInclude Include="ExplosionSystem.hpp" />
     <ClInclude Include="Flame.hpp" />
     <ClInclude Include="GameplayStage.hpp" />
-    <ClInclude Include="GameResult.hpp" />
+    <ClInclude Include="GameStatus.hpp" />
     <ClInclude Include="GameStage.hpp" />
     <ClInclude Include="IGameStage.hpp" />
     <ClInclude Include="Map.hpp" />

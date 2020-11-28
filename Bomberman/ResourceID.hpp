@@ -29,5 +29,7 @@ enum class ResourceID
     Flame,
     BombPowerUp,
     FlamePowerUp,
-    SpeedPowerUp
+    SpeedPowerUp,
+
+    Font
 };

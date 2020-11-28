@@ -50,10 +50,13 @@ void CollisionSystem::handlePlayerFlamesCollisions(entityx::Entity playerEntity,
 
     if (player.immortalTime > 0)
         player.immortalTime -= dt;
+    else
+    {
+        es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
+            handleFlameCollision(playerEntity, otherEntity, dt);
+        });
+    }
 
-    es.each<Flame, Collidable>([&](entityx::Entity otherEntity, Flame&, Collidable&) {
-        handleFlameCollision(playerEntity, otherEntity, dt);
-    });
 }
 
 void CollisionSystem::handleTilesFlamesCollisions(entityx::EntityManager& es, entityx::EventManager& events) const
@@ -88,7 +91,7 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
 {
     auto& player = *playerEntity.component<Player>();
     const auto collisionInfo = checkCollision(playerEntity, otherEntity);
-    if (collisionInfo && !player.immortalTime > 0)
+    if (collisionInfo && player.immortalTime <= 0)
     {
         player.health--;
         player.immortalTime = 3;

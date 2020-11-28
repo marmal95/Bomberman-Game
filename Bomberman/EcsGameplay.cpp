@@ -16,14 +16,13 @@
 #include "SpawnBombEvent.hpp"
 #include "SpawnTileEvent.hpp"
 #include "Map.hpp"
-#include "GameResult.hpp"
 #include "ExitStage.hpp"
 #include <algorithm>
 #include <random>
 #include <memory>
 
 EcsGameplay::EcsGameplay(const GameplayStage & stage)
-    : gameplayStage{ stage }
+    : gameplayStage{ stage }, gameStatus{ GameStatus::Running }
 {
     systems.add<SpawnSystem>(gameplayStage.getTextures());
     systems.add<MoveSystem>();
@@ -40,12 +39,15 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
 
 bool EcsGameplay::update(const entityx::TimeDelta dt)
 {
-    systems.update<SpawnSystem>(dt);
-    systems.update<MoveSystem>(dt);
-    systems.update<CollisionSystem>(dt);
-    systems.update<ExplosionSystem>(dt);
+    if (gameStatus == GameStatus::Running)
+    {
+        systems.update<SpawnSystem>(dt);
+        systems.update<MoveSystem>(dt);
+        systems.update<CollisionSystem>(dt);
+        systems.update<ExplosionSystem>(dt);
+        checkIsGameOver();
+    }
     systems.update<AnimateSystem>(dt);
-    checkIsGameOver();
     return true;
 }
 
@@ -68,6 +70,15 @@ void EcsGameplay::handleEvent(sf::Event& event)
         {
             auto player = entities.entities_with_components<Creep>().begin();
             events.emit<SpawnBombEvent>({ *player });
+        }
+    }
+
+    if (gameStatus != GameStatus::Running)
+    {
+        if (event.type == sf::Event::EventType::KeyReleased &&
+            event.key.code == sf::Keyboard::Space)
+        {
+            GameStage::changeStage(std::make_unique<ExitStage>(gameStatus));
         }
     }
 }
@@ -100,7 +111,7 @@ void EcsGameplay::createMap()
         }
     }
 
-    createExplodableBlocks(map, blankTilesIndexes);
+    //createExplodableBlocks(map, blankTilesIndexes);
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);
@@ -161,17 +172,14 @@ void EcsGameplay::createCreep()
 
 void EcsGameplay::checkIsGameOver()
 {
-    GameResult gameResult{};
     const auto bomberman = (*entities.entities_with_components<Player, Bomberman>().begin()).component<Player>();
     const auto creep = (*entities.entities_with_components<Player, Creep>().begin()).component<Player>();
 
     if (!bomberman->health && !creep->health)
-        gameResult = GameResult::Draw;
+        gameStatus = GameStatus::Draw;
     else if (!bomberman->health)
-        gameResult = GameResult::CreepWon;
+        gameStatus = GameStatus::CreepWon;
     else if (!creep->health)
-        gameResult = GameResult::BombermanWon;
+        gameStatus = GameStatus::BombermanWon;
     else return;
-
-    GameStage::changeStage(std::make_unique<ExitStage>(gameResult));
 }

@@ -3,6 +3,7 @@
 #include <entityx/entityx.h>
 #include <SFML/System/Vector2.hpp>
 #include "IGameStage.hpp"
+#include "GameStatus.hpp"
 
 class GameplayStage;
 class Map;
@@ -29,5 +30,6 @@ private:
 	void checkIsGameOver();
 
 	const GameplayStage& gameplayStage;
+	GameStatus gameStatus;
 };
 

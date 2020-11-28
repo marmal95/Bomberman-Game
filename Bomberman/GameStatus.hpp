@@ -1,7 +1,8 @@
 #pragma once
 
-enum class GameResult
+enum class GameStatus
 {
+    Running,
     BombermanWon,
     CreepWon,
     Draw
