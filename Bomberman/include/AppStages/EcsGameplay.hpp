@@ -6,7 +6,7 @@
 #include "GameStatus.hpp"
 
 class GameplayStage;
-class Map;
+struct Map;
 
 class EcsGameplay : public entityx::EntityX, public IGameStage
 {

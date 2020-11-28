@@ -81,16 +81,16 @@ void MenuStage::initSprites()
 void MenuStage::initLayout()
 {
     const auto& window = ResourcesManager::getInstance().window;
-    onePlayerOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2, twoPlayersOption.getTexture()->getSize().y / 2);
-    onePlayerOption.setPosition(window.getSize().x / 2, 320);
+    onePlayerOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2.f, twoPlayersOption.getTexture()->getSize().y / 2.f);
+    onePlayerOption.setPosition(window.getSize().x / 2.f, 320);
 
-    twoPlayersOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2, twoPlayersOption.getTexture()->getSize().y / 2);
-    twoPlayersOption.setPosition(window.getSize().x / 2, onePlayerOption.getPosition().y + 40);
+    twoPlayersOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2.f, twoPlayersOption.getTexture()->getSize().y / 2.f);
+    twoPlayersOption.setPosition(window.getSize().x / 2.f, onePlayerOption.getPosition().y + 40);
 
-    controlPlayerOne.setOrigin(controlPlayerOne.getTexture()->getSize().x / 2, controlPlayerOne.getTexture()->getSize().y / 2);
+    controlPlayerOne.setOrigin(controlPlayerOne.getTexture()->getSize().x / 2.f, controlPlayerOne.getTexture()->getSize().y / 2.f);
     controlPlayerOne.setPosition(twoPlayersOption.getPosition().x, twoPlayersOption.getPosition().y + 60);
 
-    controlPlayerTwo.setOrigin(controlPlayerTwo.getTexture()->getSize().x / 2, controlPlayerTwo.getTexture()->getSize().y / 2);
+    controlPlayerTwo.setOrigin(controlPlayerTwo.getTexture()->getSize().x / 2.f, controlPlayerTwo.getTexture()->getSize().y / 2.f);
     controlPlayerTwo.setPosition(controlPlayerOne.getPosition().x, controlPlayerOne.getPosition().y + 40);
 }
 

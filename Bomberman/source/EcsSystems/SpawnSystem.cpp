@@ -107,8 +107,8 @@ void SpawnSystem::spawnBomb(entityx::EntityManager& es, const SpawnBombEvent& ev
 {
     const auto player = event.player.component<const Player>();
     auto playerPosition = event.player.component<const Transformable>()->position;
-    playerPosition.x = static_cast<int>(playerPosition.x + 15) / 64 * 64 + 8;
-    playerPosition.y = static_cast<int>(playerPosition.y + 15) / 64 * 64 + 8;
+    playerPosition.x = static_cast<int>(playerPosition.x + 15) / 64 * 64.f + 8;
+    playerPosition.y = static_cast<int>(playerPosition.y + 15) / 64 * 64.f + 8;
 
     auto bomb = es.create();
     bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
@@ -152,8 +152,6 @@ void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& ev
 
 const sf::Texture& SpawnSystem::getPowerUpTexture(const PowerUpType type) const
 {
-    ResourceID resourceId;
-
     switch (type)
     {
     case PowerUpType::Bomb:
@@ -162,5 +160,7 @@ const sf::Texture& SpawnSystem::getPowerUpTexture(const PowerUpType type) const
         return textures.getResource(ResourceID::SpeedPowerUp); 
     case PowerUpType::Flame:
         return textures.getResource(ResourceID::FlamePowerUp);
+    default:
+        abort(); // should never happen
     }
 }

@@ -13,159 +13,180 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\AppStages">
+      <UniqueIdentifier>{7ca21418-bef3-4b36-8836-f92fc3f1e831}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EcsSystems">
+      <UniqueIdentifier>{a055e630-33a4-4aef-92b0-f23e634e49a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EcsComponents">
+      <UniqueIdentifier>{5166d622-3778-49df-af42-ecd7c07f4fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\EcsEvents">
+      <UniqueIdentifier>{67d43e50-fcea-49b9-a97a-6553d462aed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enums">
+      <UniqueIdentifier>{acdb02bb-4ba7-4349-85ba-fbfb9b8e25c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{383ac0c8-56c1-4deb-b8b5-21fe78fe8d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AppStages">
+      <UniqueIdentifier>{b9a644f8-765a-412c-9d16-2a5d260425fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EcsSystems">
+      <UniqueIdentifier>{81a50f20-c098-4f53-aa5e-fbf24b079b35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameplayStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExitStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EcsGameplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MoveSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimateSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Animated.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ExplosionSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SpawnSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="include\App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\EcsGameplay.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\ExitStage.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\GameplayStage.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\GameStage.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\IGameStage.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStages\MenuStage.hpp">
+      <Filter>Header Files\AppStages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\AnimateSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\CollisionSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\DrawSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\ExplosionSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\MoveSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsSystems\SpawnSystem.hpp">
+      <Filter>Header Files\EcsSystems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Animated.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Bomb.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Collidable.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Drawable.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Flame.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Map.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Movable.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Player.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\PowerUp.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Tile.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\Transformable.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\MoveChangeEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\SpawnBombEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\SpawnFlameEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\SpawnPowerUpEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\SpawnTileEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enums\Direction.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enums\GameStatus.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enums\PowerUpType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enums\ResourceID.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\Constants.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\ResourceHolder.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\ResourceManager.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuStage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameplayStage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExitStage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceHolder.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceID.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EcsGameplay.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IGameStage.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Drawable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Transformable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Movable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimateSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animated.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MoveChangeEvent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Constants.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collidable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tile.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ExplosionSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpawnBombEvent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Direction.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bomb.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Flame.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpawnPowerUpEvent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpawnSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpawnFlameEvent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SpawnTileEvent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerUpType.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerUp.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameStatus.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="source\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AppStages\EcsGameplay.cpp">
+      <Filter>Source Files\AppStages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AppStages\ExitStage.cpp">
+      <Filter>Source Files\AppStages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AppStages\GameplayStage.cpp">
+      <Filter>Source Files\AppStages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AppStages\GameStage.cpp">
+      <Filter>Source Files\AppStages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\AppStages\MenuStage.cpp">
+      <Filter>Source Files\AppStages</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\AnimateSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\CollisionSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\DrawSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\ExplosionSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\MoveSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EcsSystems\SpawnSystem.cpp">
+      <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
