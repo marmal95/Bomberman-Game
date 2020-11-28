@@ -111,7 +111,7 @@ void EcsGameplay::createMap()
         }
     }
 
-    //createExplodableBlocks(map, blankTilesIndexes);
+    createExplodableBlocks(map, blankTilesIndexes);
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);
