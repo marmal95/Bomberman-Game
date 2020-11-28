@@ -7,8 +7,9 @@
 
 class GameplayStage;
 struct Map;
+struct GameFinishedEvent;
 
-class EcsGameplay : public entityx::EntityX, public IGameStage
+class EcsGameplay : public entityx::EntityX, public IGameStage, public entityx::Receiver<EcsGameplay>
 {
 public:
 	EcsGameplay(const GameplayStage&);
@@ -17,6 +18,8 @@ public:
 	EcsGameplay& operator=(const EcsGameplay&) = delete;
 	EcsGameplay& operator=(EcsGameplay&&) = delete;
 	~EcsGameplay() = default;
+
+	void receive(const GameFinishedEvent&);
 
 	bool update(const entityx::TimeDelta) override;
 	void draw(sf::RenderWindow&) override;

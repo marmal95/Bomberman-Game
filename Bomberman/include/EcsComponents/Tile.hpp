@@ -1,11 +1,6 @@
 #pragma once
 
-enum class TileType
-{
-    None,
-    SolidBlock,
-    ExplodableBlock
-};
+#include "TileType.hpp"
 
 struct Tile
 {

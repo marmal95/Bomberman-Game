@@ -15,6 +15,7 @@
 #include "Constants.hpp"
 #include "SpawnBombEvent.hpp"
 #include "SpawnTileEvent.hpp"
+#include "FinishGameEvent.hpp"
 #include "Map.hpp"
 #include "ExitStage.hpp"
 #include <algorithm>
@@ -31,23 +32,36 @@ EcsGameplay::EcsGameplay(const GameplayStage & stage)
     systems.add<AnimateSystem>();
     systems.add<DrawSystem>(gameplayStage.getTextures());
     systems.configure();
+    events.subscribe<GameFinishedEvent>(*this);
 
     createBomberman();
     createCreep();
     createMap();
 }    
 
+void EcsGameplay::receive(const GameFinishedEvent&)
+{
+    const auto bomberman = (*entities.entities_with_components<Player, Bomberman>().begin()).component<Player>();
+    const auto creep = (*entities.entities_with_components<Player, Creep>().begin()).component<Player>();
+
+    GameStatus finalGameStatus{};
+    if (!bomberman->health && !creep->health)
+        finalGameStatus = GameStatus::Draw;
+    if (bomberman->health)
+        finalGameStatus = GameStatus::BombermanWon;
+    if (creep->health)
+        finalGameStatus = GameStatus::CreepWon;
+    GameStage::changeStage(std::make_unique<ExitStage>(finalGameStatus));
+}
+
 bool EcsGameplay::update(const entityx::TimeDelta dt)
 {
-    if (gameStatus == GameStatus::Running)
-    {
-        systems.update<SpawnSystem>(dt);
-        systems.update<MoveSystem>(dt);
-        systems.update<CollisionSystem>(dt);
-        systems.update<ExplosionSystem>(dt);
-        checkIsGameOver();
-    }
+    systems.update<SpawnSystem>(dt);
+    systems.update<MoveSystem>(dt);
+    systems.update<CollisionSystem>(dt);
+    systems.update<ExplosionSystem>(dt);
     systems.update<AnimateSystem>(dt);
+    checkIsGameOver();
     return true;
 }
 
@@ -70,15 +84,6 @@ void EcsGameplay::handleEvent(sf::Event& event)
         {
             auto player = entities.entities_with_components<Creep>().begin();
             events.emit<SpawnBombEvent>({ *player });
-        }
-    }
-
-    if (gameStatus != GameStatus::Running)
-    {
-        if (event.type == sf::Event::EventType::KeyReleased &&
-            event.key.code == sf::Keyboard::Space)
-        {
-            GameStage::changeStage(std::make_unique<ExitStage>(gameStatus));
         }
     }
 }
@@ -172,14 +177,15 @@ void EcsGameplay::createCreep()
 
 void EcsGameplay::checkIsGameOver()
 {
+    if (gameStatus != GameStatus::Running)
+        return;
+
     const auto bomberman = (*entities.entities_with_components<Player, Bomberman>().begin()).component<Player>();
     const auto creep = (*entities.entities_with_components<Player, Creep>().begin()).component<Player>();
 
-    if (!bomberman->health && !creep->health)
-        gameStatus = GameStatus::Draw;
-    else if (!bomberman->health)
-        gameStatus = GameStatus::CreepWon;
-    else if (!creep->health)
-        gameStatus = GameStatus::BombermanWon;
-    else return;
+    if (!bomberman->health || !creep->health)
+    {
+        events.emit<FinishGameEvent>();
+        gameStatus = GameStatus::Finishing;
+    }
 }

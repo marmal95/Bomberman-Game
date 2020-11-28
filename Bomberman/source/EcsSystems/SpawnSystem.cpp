@@ -8,6 +8,7 @@
 #include "Transformable.hpp"
 #include "SpawnSystem.hpp"
 #include "PowerUp.hpp"
+#include "TopLevel.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }, generator{ std::random_device{}() }, spawnPowerUpEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnTilesEvents{}
@@ -146,6 +147,10 @@ void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& ev
     case TileType::ExplodableBlock:
         tile.assign<Collidable>();
         tile.assign<Drawable>(textures.getResource(ResourceID::ExplodableBlock));
+        break;
+    case TileType::FinishingGameAnimationBlock:
+        tile.assign<TopLevel>();
+        tile.assign<Drawable>(textures.getResource(ResourceID::SolidRedBlock));
         break;
     }
 }

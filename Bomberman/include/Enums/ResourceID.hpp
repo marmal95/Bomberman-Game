@@ -14,6 +14,7 @@ enum class ResourceID
     BackgroundTile,
     ExplodableBlock,
     SolidBlock,
+    SolidRedBlock,
 
     BombermanBack,
     BombermanFront,

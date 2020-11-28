@@ -4,6 +4,7 @@
 #include "ResourceManager.hpp"
 #include "MoveChangeEvent.hpp"
 #include "Player.hpp"
+#include "TopLevel.hpp"
 
 #ifdef _DEBUG
 #include "Collidable.hpp"
@@ -24,6 +25,11 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
     });
 
     drawPlayers(es);
+
+    es.each<TopLevel, Transformable, Drawable>([&](entityx::Entity entity, TopLevel&, Transformable& transformable, Drawable& drawable)
+    {
+        drawEntity(entity, drawable, transformable, window);
+    });
 }
 
 void DrawSystem::configure(entityx::EventManager& events)

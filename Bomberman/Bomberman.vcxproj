@@ -36,7 +36,10 @@
     <ClInclude Include="include\EcsComponents\Player.hpp" />
     <ClInclude Include="include\EcsComponents\PowerUp.hpp" />
     <ClInclude Include="include\EcsComponents\Tile.hpp" />
+    <ClInclude Include="include\EcsComponents\TopLevel.hpp" />
     <ClInclude Include="include\EcsComponents\Transformable.hpp" />
+    <ClInclude Include="include\EcsEvents\FinishGameEvent.hpp" />
+    <ClInclude Include="include\EcsEvents\GameFinishedEvent.hpp" />
     <ClInclude Include="include\EcsEvents\MoveChangeEvent.hpp" />
     <ClInclude Include="include\EcsEvents\SpawnBombEvent.hpp" />
     <ClInclude Include="include\EcsEvents\SpawnFlameEvent.hpp" />
@@ -52,6 +55,7 @@
     <ClInclude Include="include\Enums\GameStatus.hpp" />
     <ClInclude Include="include\Enums\PowerUpType.hpp" />
     <ClInclude Include="include\Enums\ResourceID.hpp" />
+    <ClInclude Include="include\Enums\TileType.hpp" />
     <ClInclude Include="include\Utils\Constants.hpp" />
     <ClInclude Include="include\Utils\ResourceHolder.hpp" />
     <ClInclude Include="include\Utils\ResourceManager.hpp" />

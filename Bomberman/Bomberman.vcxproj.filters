@@ -147,6 +147,18 @@
     <ClInclude Include="include\Utils\ResourceManager.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\EcsEvents\FinishGameEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Enums\TileType.hpp">
+      <Filter>Header Files\Enums</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsComponents\TopLevel.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\GameFinishedEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp">
