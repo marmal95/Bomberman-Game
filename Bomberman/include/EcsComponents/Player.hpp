@@ -4,9 +4,9 @@
 
 struct Player 
 {
-    int bombsNum{ 5 };
-    int bombsRange{ 5 };
-    int health{ 3 };
+    int bombsNum{ 1 };
+    int bombsRange{ 1 };
+    int health{ 1 };
     entityx::TimeDelta immortalTime{};
 };
 

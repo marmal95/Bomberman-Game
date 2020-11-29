@@ -9,6 +9,7 @@
 #include "Player.hpp"
 #include "SpawnFlameEvent.hpp"
 #include "SpawnBombEvent.hpp"
+#include "Utils.hpp"
 
 
 void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
@@ -27,32 +28,23 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
 
         if (bomb.timeToExplode <= 0)
         {
-            const sf::Vector2i bombIndex = { static_cast<int>(transformable.position.x) / 64,
-                                             static_cast<int>(transformable.position.y) / 64 };
+            const sf::Vector2i bombIndex = calculateTileIndexForPosition(transformable.position);
 
             for (int i = 1; i <= bomb.range; i++)
-            {
                 if (!spawnFlameInRow(es, events, map, entity, bombIndex, i))
                     break;
-            }
 
             for (int i = 0; i >= -bomb.range; i--)
-            {
                 if (!spawnFlameInRow(es, events, map, entity, bombIndex, i))
                     break;
-            }
 
             for (int i = 1; i <= bomb.range; i++)
-            {
                 if (!spawnFlameInCol(es,events, map, entity, bombIndex, i))
                     break;
-            }
 
             for (int i = 0; i >= -bomb.range; i--)
-            {
                 if (!spawnFlameInCol(es, events, map, entity, bombIndex, i))
                     break;
-            }
 
             auto& bombOwner = *bomb.spawner.component<Player>();
             ++bombOwner.bombsNum;
@@ -65,11 +57,11 @@ bool ExplosionSystem::spawnFlameInRow(
     entityx::EntityManager& es, entityx::EventManager& events, const Map& map, entityx::Entity bomb, const sf::Vector2i bombIndex, const int i) const
 {
     const auto& transformable = *bomb.component<Transformable>();
-    if (auto rowIndex = bombIndex.y + i; rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
-        map.tiles[rowIndex][bombIndex.x].tileType != TileType::SolidBlock)
+    if (auto columnIndex = bombIndex.y + i; columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
+        map.tiles[bombIndex.x][columnIndex].tileType != TileType::SolidBlock)
     {
-        const auto isExplodable = map.tiles[rowIndex][bombIndex.x].tileType == TileType::ExplodableBlock;
-        spawnFlame(es, events, { transformable.position.x, transformable.position.y + 64.f * i });
+        const auto isExplodable = map.tiles[bombIndex.x][columnIndex].tileType == TileType::ExplodableBlock;
+        spawnFlame(es, events, calculatePositionInTileCenter(sf::Vector2i{ bombIndex.x, columnIndex }, FLAME_SPRITE_SIZE));
         return !isExplodable;
     }
     return false;
@@ -79,11 +71,11 @@ bool ExplosionSystem::spawnFlameInCol(
     entityx::EntityManager& es, entityx::EventManager& events,const Map& map, entityx::Entity bomb, const sf::Vector2i bombIndex, const int i) const
 {
     const auto& transformable = *bomb.component<Transformable>();
-    if (auto columnIndex = bombIndex.x - i; columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
-        map.tiles[bombIndex.y][columnIndex].tileType != TileType::SolidBlock)
+    if (auto rowIndex = bombIndex.x - i; rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
+        map.tiles[rowIndex][bombIndex.y].tileType != TileType::SolidBlock)
     {
-        const auto isExplodable = map.tiles[bombIndex.y][columnIndex].tileType == TileType::ExplodableBlock;
-        spawnFlame(es, events, { transformable.position.x - 64.f * i, transformable.position.y });
+        const auto isExplodable = map.tiles[rowIndex][bombIndex.y].tileType == TileType::ExplodableBlock;
+        spawnFlame(es, events, calculatePositionInTileCenter(sf::Vector2i{ rowIndex, bombIndex.y }, FLAME_SPRITE_SIZE));
         return !isExplodable;
     }
     return false;

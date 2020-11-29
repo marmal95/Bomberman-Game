@@ -33,8 +33,8 @@ void GameplayStage::resizeWindow() const
 {
     const auto desktopMode = sf::VideoMode::getDesktopMode();
     auto& window = ResourcesManager::getInstance().window;
-    window.setSize(sf::Vector2u(WIDTH_TILES_NUM * 64, HEIGHT_TILES_NUM * 64));
-    window.setView(sf::View(sf::FloatRect(0, 0, WIDTH_TILES_NUM * 64, HEIGHT_TILES_NUM * 64)));
+    window.setSize(GAME_WINDOW_SIZE);
+    window.setView(sf::View(sf::FloatRect(0, 0, GAME_WINDOW_SIZE.x, GAME_WINDOW_SIZE.y)));
     window.setPosition({ static_cast<int>(desktopMode.width - window.getSize().x) / 2, 0 });
 }
 

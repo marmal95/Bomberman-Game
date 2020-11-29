@@ -9,6 +9,7 @@
 #include "SpawnSystem.hpp"
 #include "PowerUp.hpp"
 #include "TopLevel.hpp"
+#include "Utils.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }, generator{ std::random_device{}() }, spawnPowerUpEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnTilesEvents{}
@@ -87,11 +88,14 @@ void SpawnSystem::handleSpawnTileEvents(entityx::EntityManager& es)
 
 void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEvent& event)
 {
-    std::uniform_int_distribution<> dist(0, 100);
-    const int powerUpProbability = 25;
-    const auto temp = dist(generator);
+    const auto tileIndexToSpawn = calculateTileIndexForPosition(event.position);
+    const auto positionInTile = calculatePositionInTileCenter(tileIndexToSpawn, POWER_UP_SPRITE_SIZE);
 
-    if (temp <= 25)
+    std::uniform_int_distribution<> dist(0, 100);
+    const auto powerUpProbability = 25;
+    const auto randomProbability = dist(generator);
+
+    if (randomProbability <= powerUpProbability)
     {
         dist = std::uniform_int_distribution<>(0, static_cast<int>(PowerUpType::Count) - 1);
         PowerUpType powerUpType{ dist(generator) };
@@ -100,21 +104,22 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
         powerUpEntity.assign<PowerUp>(PowerUp{ powerUpType });
         powerUpEntity.assign<Drawable>(getPowerUpTexture(powerUpType));
         powerUpEntity.assign<Collidable>();
-        powerUpEntity.assign<Transformable>(Transformable{ { 32, 32 }, { event.position.x + 16, event.position.y + 16 } });
+        powerUpEntity.assign<Transformable>(Transformable{ toVector2f(POWER_UP_SPRITE_SIZE), positionInTile });
     }
 }
 
 void SpawnSystem::spawnBomb(entityx::EntityManager& es, const SpawnBombEvent& event) const
 {
     const auto player = event.player.component<const Player>();
-    auto playerPosition = event.player.component<const Transformable>()->position;
-    playerPosition.x = static_cast<int>(playerPosition.x + 15) / 64 * 64.f + 8;
-    playerPosition.y = static_cast<int>(playerPosition.y + 15) / 64 * 64.f + 8;
+    const auto& playerPosition = *event.player.component<const Transformable>();
+
+    const auto playerTileIndex = calculateTileIndexForCenterPosition(playerPosition.position, playerPosition.size);
+    const auto bombPosition = calculatePositionInTileCenter(playerTileIndex, BOMB_SPRITE_SIZE);
 
     auto bomb = es.create();
     bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
-    bomb.assign<Transformable>(Transformable{ { 48, 48 }, playerPosition });
-    bomb.assign<Animated>(48, 48, 3, 0.1);
+    bomb.assign<Transformable>(Transformable{ toVector2f(BOMB_SPRITE_SIZE), bombPosition });
+    bomb.assign<Animated>(BOMB_SPRITE_SIZE, 3, 0.1);
     bomb.assign<Bomb>(Bomb{ event.player, 3, player->bombsRange });
     bomb.assign<Collidable>(Collidable{ event.player });
 }
@@ -123,16 +128,16 @@ void SpawnSystem::spawnFlame(entityx::EntityManager& es, const SpawnFlameEvent& 
 {
     auto flame = es.create();
     flame.assign<Flame>(Flame{ 2 });
-    flame.assign<Transformable>(Transformable{ { 48, 48 }, event.position });
+    flame.assign<Transformable>(Transformable{ toVector2f(FLAME_SPRITE_SIZE), event.position });
     flame.assign<Drawable>(textures.getResource(ResourceID::Flame));
-    flame.assign<Animated>(48, 48, 5, 0.1);
+    flame.assign<Animated>(FLAME_SPRITE_SIZE, 5, 0.1);
     flame.assign<Collidable>();
 }
 
 void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& event) const
 {
     auto tile = es.create();
-    tile.assign<Transformable>(Transformable{ { 64.f, 64.f }, event.position });
+    tile.assign<Transformable>(Transformable{ toVector2f(TILE_SIZE), event.position });
     tile.assign<Tile>(Tile{ event.tileType });
 
     switch (event.tileType)

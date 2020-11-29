@@ -59,6 +59,7 @@
     <ClInclude Include="include\Utils\Constants.hpp" />
     <ClInclude Include="include\Utils\ResourceHolder.hpp" />
     <ClInclude Include="include\Utils\ResourceManager.hpp" />
+    <ClInclude Include="include\Utils\Utils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp" />

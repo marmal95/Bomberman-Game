@@ -3,6 +3,8 @@
 #include "Drawable.hpp"
 #include "SpawnTileEvent.hpp"
 #include "GameFinishedEvent.hpp"
+#include "Constants.hpp"
+#include "Utils.hpp"
 
 void AnimateSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
@@ -53,11 +55,11 @@ void AnimateSystem::handleFinishGameEvent(entityx::EventManager& events, entityx
         timeToSpawnFinishingGameTile -= dt;
         if (timeToSpawnFinishingGameTile < 0)
         {
-            const auto tilePositionToSpawn = finishingGameTilesPositions.front();
-            events.emit<SpawnTileEvent>(SpawnTileEvent{ { tilePositionToSpawn.y * 64.f, tilePositionToSpawn.x * 64.f } , TileType::FinishingGameAnimationBlock });
+            const auto tileIndexToSpawn = finishingGameTilesPositions.front();
+            events.emit<SpawnTileEvent>(SpawnTileEvent{ calculatePositionForTileIndex(tileIndexToSpawn) , TileType::FinishingGameAnimationBlock });
 
             finishingGameTilesPositions.pop();
-            timeToSpawnFinishingGameTile = 1 / 20;
+            timeToSpawnFinishingGameTile = FINAL_ANIM_STEP_TIME;
         }
 
         if (finishingGameTilesPositions.empty())
@@ -73,31 +75,31 @@ void AnimateSystem::notifyGameFinished(entityx::EventManager& events)
 
 void AnimateSystem::prepareFinishingAnimation()
 {
-    int i, k = 0, l = 0;
-    int m = 21, n = 21;
+    int startingRowIndex = 0, startingColumnIndex = 0;
+    int endingRowIndex = HEIGHT_TILES_NUM, endingColumnIndex = WIDTH_TILES_NUM;
 
-    while (k < m && l < n)
+    while (startingRowIndex < endingRowIndex && startingColumnIndex < endingColumnIndex)
     {
-        for (i = l; i < n; ++i)
-            finishingGameTilesPositions.push({ k, i });
-        k++;
+        for (int columnIndex = startingColumnIndex; columnIndex < endingColumnIndex; ++columnIndex)
+            finishingGameTilesPositions.push({ startingRowIndex, columnIndex });
+        startingRowIndex++;
 
-        for (i = k; i < m; ++i)
-            finishingGameTilesPositions.push({ i, n - 1 });
-        n--;
+        for (int rowIndex = startingRowIndex; rowIndex < endingRowIndex; ++rowIndex)
+            finishingGameTilesPositions.push({ rowIndex, endingColumnIndex - 1 });
+        endingColumnIndex--;
 
-        if (k < m)
+        if (startingRowIndex < endingRowIndex)
         {
-            for (i = n - 1; i >= l; --i)
-                finishingGameTilesPositions.push({ m - 1, i });
-            m--;
+            for (int columnIndex = endingColumnIndex - 1; columnIndex >= startingColumnIndex; --columnIndex)
+                finishingGameTilesPositions.push({ endingRowIndex - 1, columnIndex });
+            endingRowIndex--;
         }
 
-        if (l < n)
+        if (startingColumnIndex < endingColumnIndex)
         {
-            for (i = m - 1; i >= k; --i)
-                finishingGameTilesPositions.push({ i, l });
-            l++;
+            for (int rowIndex = endingRowIndex - 1; rowIndex >= startingRowIndex; --rowIndex)
+                finishingGameTilesPositions.push({ rowIndex, startingColumnIndex });
+            startingColumnIndex++;
         }
     }
 }

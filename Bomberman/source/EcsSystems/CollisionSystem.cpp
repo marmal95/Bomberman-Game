@@ -8,6 +8,7 @@
 #include "SpawnPowerUpEvent.hpp"
 #include "PowerUp.hpp"
 #include "Movable.hpp"
+#include "Utils.hpp"
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
@@ -94,7 +95,7 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
     if (collisionInfo && player.immortalTime <= 0)
     {
         player.health--;
-        player.immortalTime = 3;
+        player.immortalTime = IMMORTAL_TIME_AFTER_DEAD;
     }
 }
 
@@ -131,8 +132,7 @@ void CollisionSystem::handleTileFlameCollision(entityx::Entity flameEntity, enti
 
     if (auto collisionInfo = checkCollision(flameEntity, tileEntity); collisionInfo)
     {
-        const sf::Vector2i tileIndexPosition = { static_cast<int>(tileTransformable.position.y) / 64,
-                                                 static_cast<int>(tileTransformable.position.x) / 64 };
+        const auto tileIndexPosition = calculateTileIndexForPosition(tileTransformable.position);
         map.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
         events.emit<SpawnPowerUpEvent>(SpawnPowerUpEvent{ tileTransformable.position });
         tileEntity.destroy();

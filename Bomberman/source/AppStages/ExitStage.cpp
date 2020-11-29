@@ -1,5 +1,6 @@
 #include "ExitStage.hpp"
 #include "ResourceManager.hpp"
+#include "Constants.hpp"
 
 ExitStage::ExitStage(const GameStatus gameResult)
     : textures{}, fonts{}, background{}, bomberman{}, creep{}, bombermanStatus{}, creepStatus{}, playAgain{}, exitGame{}, selectedOption{ Option::PlayAgain }
@@ -45,8 +46,8 @@ void ExitStage::resizeWindow() const
 {
     const auto desktopMode = sf::VideoMode::getDesktopMode();
     auto& window = ResourcesManager::getInstance().window;
-    window.setSize(sf::Vector2u(576, 576));
-    window.setView(sf::View(sf::FloatRect(0, 0, 576, 576)));
+    window.setSize(EXIT_WINDOW_SIZE);
+    window.setView(sf::View(sf::FloatRect(0, 0, EXIT_WINDOW_SIZE.x, EXIT_WINDOW_SIZE.y)));
     window.setPosition({ static_cast<int>(desktopMode.width - window.getSize().x) / 2,
                          static_cast<int>(desktopMode.height - window.getSize().y) / 2 });
 }
@@ -62,11 +63,11 @@ void ExitStage::loadResources()
 
 void ExitStage::initSprites()
 {
-    background.setTexture(textures.getResource(ResourceID::MenuBackground));\
+    background.setTexture(textures.getResource(ResourceID::MenuBackground));
     bomberman.setTexture(textures.getResource(ResourceID::BombermanFront));
-    bomberman.setTextureRect(sf::IntRect{ 0, 0, 64, 128 });
+    bomberman.setTextureRect(sf::IntRect(0, 0, BOMBERMAN_SPRITE_SIZE.x, BOMBERMAN_SPRITE_SIZE.y));
     creep.setTexture(textures.getResource(ResourceID::CreepFront));
-    creep.setTextureRect(sf::IntRect{ 0, 0, 64, 64 });
+    creep.setTextureRect(sf::IntRect(0, 0, CREEP_SPRITE_SIZE.x, CREEP_SPRITE_SIZE.y));
 }
 
 void ExitStage::initTexts()
@@ -98,8 +99,8 @@ void ExitStage::initLayout()
     bombermanStatus.setPosition(bomberman.getPosition().x, bomberman.getPosition().y + bomberman.getTexture()->getSize().y + 24);
     creepStatus.setPosition(creep.getPosition().x, creep.getPosition().y + creep.getTexture()->getSize().y + 24);
 
-    playAgain.setPosition((576 - playAgain.getGlobalBounds().width) / 2, 340);
-    exitGame.setPosition((576 - exitGame.getGlobalBounds().width) / 2, 340 + 64);
+    playAgain.setPosition((EXIT_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
+    exitGame.setPosition((EXIT_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);
 }
 
 void ExitStage::repaintOptions()

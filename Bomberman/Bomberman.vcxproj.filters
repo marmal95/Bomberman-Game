@@ -159,6 +159,9 @@
     <ClInclude Include="include\EcsEvents\GameFinishedEvent.hpp">
       <Filter>Header Files\EcsEvents</Filter>
     </ClInclude>
+    <ClInclude Include="include\Utils\Utils.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp">
