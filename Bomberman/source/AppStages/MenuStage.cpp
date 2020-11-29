@@ -1,17 +1,20 @@
 #include "MenuStage.hpp"
 #include "ResourceManager.hpp"
-#include <iostream>
+#include "Constants.hpp"
 
 MenuStage::MenuStage()
+    : textures{}, fonts{}, background{}, title{}, playAgain{}, exitGame{}, selectedOption{ Option::PlayAgain }
 {
     resizeWindow();
     loadResources();
     initSprites();
+    initTexts();
     initLayout();
 }
 
 bool MenuStage::update(const entityx::TimeDelta)
 {
+    repaintOptions();
     return true;
 }
 
@@ -19,31 +22,18 @@ void MenuStage::draw(sf::RenderWindow& window)
 {
     window.draw(background);
     window.draw(title);
-    window.draw(onePlayerOption);
-    window.draw(twoPlayersOption);
-    window.draw(controlPlayerOne);
-    window.draw(controlPlayerTwo);
+    window.draw(playAgain);
+    window.draw(exitGame);
 }
 
 void MenuStage::handleEvent(sf::Event& event)
 {
-    if (event.type == sf::Event::EventType::KeyReleased &&
-        event.key.code == sf::Keyboard::Space)
-    {
-        GameStage::changeStage(std::make_unique<GameplayStage>());
-    }
-    else if (event.type == sf::Event::EventType::MouseMoved)
-    {
-        const auto mousePos = sf::Mouse::getPosition(ResourcesManager::getInstance().window);
-
-        isMouseOverElement(onePlayerOption) ? 
-            onePlayerOption.setTexture(textures.getResource(ResourceID::MenuOnePlayerHover)) :
-            onePlayerOption.setTexture(textures.getResource(ResourceID::MenuOnePlayer));
-
-        isMouseOverElement(twoPlayersOption) ?
-            twoPlayersOption.setTexture(textures.getResource(ResourceID::MenuTwoPlayersHover)) :
-            twoPlayersOption.setTexture(textures.getResource(ResourceID::MenuTwoPlayers));
-    }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down)
+        selectedOption = Option::ExitGame;
+    else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up)
+        selectedOption = Option::PlayAgain;
+    else if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
+        changeStage();
 }
 
 void MenuStage::resizeWindow() const
@@ -60,48 +50,53 @@ void MenuStage::loadResources()
 {
     textures.load(ResourceID::MenuBackground, "resources/Menu/title_background.jpg");
     textures.load(ResourceID::MenuTitle, "resources/Menu/title_titletext.png");
-    textures.load(ResourceID::MenuOnePlayer, "resources/Menu/One_Player_Normal.png");
-    textures.load(ResourceID::MenuOnePlayerHover, "resources/Menu/One_Player_Hover.png");
-    textures.load(ResourceID::MenuTwoPlayers, "resources/Menu/Two_Players_Normal.png");
-    textures.load(ResourceID::MenuTwoPlayersHover, "resources/Menu/Two_Players_Hover.png");
-    textures.load(ResourceID::MenuControlPlayerOne, "resources/Menu/Control_PlayerOne.png");
-    textures.load(ResourceID::MenuControlPlayerTwo, "resources/Menu/Control_PlayerTwo.png");
 }
 
 void MenuStage::initSprites()
 {
     background.setTexture(textures.getResource(ResourceID::MenuBackground));
     title.setTexture(textures.getResource(ResourceID::MenuTitle));
-    onePlayerOption.setTexture(textures.getResource(ResourceID::MenuOnePlayer));
-    twoPlayersOption.setTexture(textures.getResource(ResourceID::MenuTwoPlayers));
-    controlPlayerOne.setTexture(textures.getResource(ResourceID::MenuControlPlayerOne));
-    controlPlayerTwo.setTexture(textures.getResource(ResourceID::MenuControlPlayerTwo));
+    fonts.load(ResourceID::Font, "resources/Font/AmazDooMLeft.ttf");
+}
+
+void MenuStage::initTexts()
+{
+    playAgain.setFont(fonts.getResource(ResourceID::Font));
+    playAgain.setFillColor(sf::Color{ 239, 209, 58 });
+    playAgain.setCharacterSize(48);
+    playAgain.setString("Play again");
+
+    exitGame.setFont(fonts.getResource(ResourceID::Font));
+    exitGame.setFillColor(sf::Color{ 239, 209, 58 });
+    exitGame.setCharacterSize(48);
+    exitGame.setString("Exit game");
 }
 
 void MenuStage::initLayout()
 {
     const auto& window = ResourcesManager::getInstance().window;
-    onePlayerOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2.f, twoPlayersOption.getTexture()->getSize().y / 2.f);
-    onePlayerOption.setPosition(window.getSize().x / 2.f, 320);
-
-    twoPlayersOption.setOrigin(twoPlayersOption.getTexture()->getSize().x / 2.f, twoPlayersOption.getTexture()->getSize().y / 2.f);
-    twoPlayersOption.setPosition(window.getSize().x / 2.f, onePlayerOption.getPosition().y + 40);
-
-    controlPlayerOne.setOrigin(controlPlayerOne.getTexture()->getSize().x / 2.f, controlPlayerOne.getTexture()->getSize().y / 2.f);
-    controlPlayerOne.setPosition(twoPlayersOption.getPosition().x, twoPlayersOption.getPosition().y + 60);
-
-    controlPlayerTwo.setOrigin(controlPlayerTwo.getTexture()->getSize().x / 2.f, controlPlayerTwo.getTexture()->getSize().y / 2.f);
-    controlPlayerTwo.setPosition(controlPlayerOne.getPosition().x, controlPlayerOne.getPosition().y + 40);
+    playAgain.setPosition((MENU_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
+    exitGame.setPosition((MENU_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);
 }
 
-bool MenuStage::isMouseOverElement(const sf::Sprite& element) const
+void MenuStage::repaintOptions()
 {
-    const auto mousePos = sf::Mouse::getPosition(ResourcesManager::getInstance().window);
-    const auto& elementPos = element.getPosition();
-    const auto& elementSize = element.getTexture()->getSize();
+    if (selectedOption == Option::PlayAgain)
+    {
+        playAgain.setFillColor(sf::Color{ 180, 0, 0 });
+        exitGame.setFillColor(sf::Color{ 239, 209, 58 });
+    }
+    else if (selectedOption == Option::ExitGame)
+    {
+        exitGame.setFillColor(sf::Color{ 180, 0, 0 });
+        playAgain.setFillColor(sf::Color{ 239, 209, 58 });
+    }
+}
 
-    return ((mousePos.x >= (elementPos.x - (elementSize.x / 2))) &&
-            (mousePos.x <= (elementPos.x + (elementSize.x / 2))) &&
-            (mousePos.y <= (elementPos.y + (elementSize.y / 2))) &&
-            (mousePos.y >= (elementPos.y - (elementSize.y / 2))));
+void MenuStage::changeStage() const
+{
+    if (selectedOption == Option::PlayAgain)
+        GameStage::changeStage(std::make_unique<GameplayStage>());
+    else if (selectedOption == Option::ExitGame)
+        ResourcesManager::getInstance().window.close();
 }

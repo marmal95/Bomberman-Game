@@ -3,6 +3,7 @@
 #include "GameStage.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceID.hpp"
+#include "MenuOption.hpp"
 
 class MenuStage : public GameStage
 {
@@ -16,16 +17,18 @@ private:
 	void resizeWindow() const;
 	void loadResources();
 	void initSprites();
+	void initTexts();
 	void initLayout();
 
-	bool isMouseOverElement(const sf::Sprite&) const;
+	void repaintOptions();
+	void changeStage() const;
 
 	ResourceHolder<sf::Texture, ResourceID> textures;
+	ResourceHolder<sf::Font, ResourceID> fonts;
 	sf::Sprite background;
 	sf::Sprite title;
-	sf::Sprite onePlayerOption;
-	sf::Sprite twoPlayersOption;
-	sf::Sprite controlPlayerOne;
-	sf::Sprite controlPlayerTwo;
+	sf::Text playAgain;
+	sf::Text exitGame;
+	Option selectedOption;
 };
 

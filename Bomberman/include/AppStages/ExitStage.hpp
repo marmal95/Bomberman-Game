@@ -4,12 +4,7 @@
 #include "GameStatus.hpp"
 #include "ResourceHolder.hpp"
 #include "ResourceID.hpp"
-
-enum class Option
-{
-	PlayAgain,
-	ExitGame
-};
+#include "MenuOption.hpp"
 
 class ExitStage : public GameStage
 {
