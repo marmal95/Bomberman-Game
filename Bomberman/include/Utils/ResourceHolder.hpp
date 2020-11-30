@@ -4,6 +4,7 @@
 #include <memory>
 #include <cassert>
 #include <string>
+#include <stdexcept>
 
 template <typename Resource, typename Identifier>
 class ResourceHolder
@@ -14,7 +15,6 @@ private:
 public:
 	ResourceHolder();
 	void load(Identifier id, const std::string& filename);
-	void load(Identifier id, const std::string& filename, bool smooth);
 	void load(Identifier id, std::unique_ptr<Resource>&& resource);
 	Resource& getResource(Identifier id);
 	const Resource& getResource(Identifier id) const;
@@ -31,18 +31,6 @@ void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string
 	auto uPtr = std::make_unique<Resource>();
 	if (!uPtr->loadFromFile(filename))
 		throw std::runtime_error("Could not find resource:" + filename);
-
-	auto isInserted = mResourceMap.insert(std::make_pair(id, std::move(uPtr)));
-	assert(isInserted.second);
-}
-
-template <typename Resource, typename Identifier>
-void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename, bool smooth)
-{
-	auto uPtr = std::make_unique<Resource>();
-	if (!uPtr->loadFromFile(filename))
-		throw std::runtime_error("Could not find resource:" + filename);
-	uPtr->setSmooth(smooth);
 
 	auto isInserted = mResourceMap.insert(std::make_pair(id, std::move(uPtr)));
 	assert(isInserted.second);

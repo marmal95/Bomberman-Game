@@ -7,7 +7,6 @@ constexpr int WIDTH_TILES_NUM = 21;
 constexpr int HEIGHT_TILES_NUM = 21;
 constexpr int DISTANCE_TO_EXPLODABLE_BLOCKS = 2;
 
-constexpr float FINAL_ANIM_STEP_TIME = 1.f / 200;
 constexpr float PLAYER_INITIAL_ANIM_SPEED = 1;
 constexpr float IMMORTAL_TIME_AFTER_DEAD = 3;
 

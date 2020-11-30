@@ -47,11 +47,11 @@ void EcsGameplay::receive(const GameFinishedEvent&)
     const auto creep = (*entities.entities_with_components<Player, Creep>().begin()).component<Player>();
 
     GameStatus finalGameStatus{};
-    if (!bomberman->health && !creep->health)
+    if (bomberman->health <= 0 && creep->health <= 0)
         finalGameStatus = GameStatus::Draw;
-    if (bomberman->health)
+    else if (bomberman->health > 0)
         finalGameStatus = GameStatus::BombermanWon;
-    if (creep->health)
+    else if (creep->health > 0)
         finalGameStatus = GameStatus::CreepWon;
     GameStage::changeStage(std::make_unique<ExitStage>(finalGameStatus));
 }
@@ -118,7 +118,7 @@ void EcsGameplay::createMap()
         }
     }
 
-    createExplodableBlocks(map, blankTilesIndexes);
+    //createExplodableBlocks(map, blankTilesIndexes);
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);

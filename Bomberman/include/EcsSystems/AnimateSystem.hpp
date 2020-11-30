@@ -26,6 +26,5 @@ private:
     std::vector<MoveChangeEvent> moveChangeEvents;
     std::queue<sf::Vector2i> finishingGameTilesPositions;
     std::optional<FinishGameEvent> finishGameEvent;
-    float timeToSpawnFinishingGameTile;
 };
 

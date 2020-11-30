@@ -5,6 +5,8 @@
 #include "MoveChangeEvent.hpp"
 #include "Player.hpp"
 #include "TopLevel.hpp"
+#include <queue>
+#include <vector>
 
 #ifdef _DEBUG
 #include "Collidable.hpp"
@@ -18,17 +20,16 @@ void DrawSystem::update(entityx::EntityManager& es, entityx::EventManager& event
 {
     handleMoveChangeEvents();
 
-    auto& window = ResourcesManager::getInstance().window;
     es.each<Transformable, Drawable>([&](entityx::Entity entity, Transformable& transformable, Drawable& drawable)
     {
-        drawEntity(entity, drawable, transformable, window);
+        drawEntity(entity, drawable, transformable);
     });
 
     drawPlayers(es);
 
     es.each<TopLevel, Transformable, Drawable>([&](entityx::Entity entity, TopLevel&, Transformable& transformable, Drawable& drawable)
     {
-        drawEntity(entity, drawable, transformable, window);
+        drawEntity(entity, drawable, transformable);
     });
 }
 
@@ -80,35 +81,35 @@ void DrawSystem::handleCreepMoveChangeEvent(MoveChangeEvent& event)
 
 void DrawSystem::drawPlayers(entityx::EntityManager& es) const
 {
-    auto& window = ResourcesManager::getInstance().window;
+    const auto entityPositionComparator = [](const auto left, const auto right) {
+        const auto& transformable1 = *left.component<const Transformable>();
+        const auto& transformable2 = *right.component<const Transformable>();
+        return transformable1.position.y > transformable2.position.y;
+    };
 
-    auto bomberman = (*es.entities_with_components<Bomberman>().begin());
-    auto& bombermanPlayer = *bomberman.component<Player>();
-    auto& bombermanTransformable = *bomberman.component<Transformable>();
-    auto& bombermanDrawable = *bomberman.component<Drawable>();
+    using VerticalPositionPlayersQueue = std::priority_queue<entityx::Entity, std::vector<entityx::Entity>, decltype(entityPositionComparator)>;
+    VerticalPositionPlayersQueue playersQueue{ entityPositionComparator };
 
-    auto creep = (*es.entities_with_components<Creep>().begin());
-    auto& creepPlayer = *creep.component<Player>();
-    auto& creepTransformable = *creep.component<Transformable>();
-    auto& creepDrawable = *creep.component<Drawable>();
-
-    changeOpacity(bombermanDrawable, bombermanPlayer);
-    changeOpacity(creepDrawable, creepPlayer);
-
-    if (bombermanTransformable.position.y < creepTransformable.position.y)
+    es.entities_with_components<Player, Drawable, Transformable>()
+        .each([&](entityx::Entity entity, Player&, Drawable&, Transformable&)
     {
-        drawEntity(bomberman, bombermanDrawable, bombermanTransformable, window);
-        drawEntity(creep, creepDrawable, creepTransformable, window);
-    }
-    else
+        playersQueue.push(entity);
+    });
+
+    while (!playersQueue.empty())
     {
-        drawEntity(creep, creepDrawable, creepTransformable, window);
-        drawEntity(bomberman, bombermanDrawable, bombermanTransformable, window);
+        auto entity = playersQueue.top();
+        auto& drawable = *entity.component<Drawable>();
+        changeOpacity(drawable, *entity.component<Player>());
+        drawEntity(entity, drawable, *entity.component<Transformable>());
+        playersQueue.pop();
     }
 }
 
-void DrawSystem::drawEntity(entityx::Entity entity, Drawable& drawable, Transformable& transformable, sf::RenderWindow& window) const
+void DrawSystem::drawEntity(entityx::Entity entity, Drawable& drawable, Transformable& transformable) const
 {
+    auto& window = ResourcesManager::getInstance().window;
+
 #ifdef _DEBUG
     if (entity.has_component<Collidable>())
     {
@@ -120,6 +121,7 @@ void DrawSystem::drawEntity(entityx::Entity entity, Drawable& drawable, Transfor
         window.draw(shape);
     }
 #endif
+
     drawable.sprite.setPosition(transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
         transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
     window.draw(drawable.sprite);

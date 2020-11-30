@@ -9,12 +9,12 @@
 
 void MoveSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
-    es.each<Bomberman>([&](entityx::Entity entity, Bomberman&)
+    es.each<Bomberman, Transformable, Movable>([&](entityx::Entity entity, Bomberman&, Transformable&, Movable&)
     {
         moveBomberman(entity, events, dt);
     });
 
-    es.each<Creep>([&](entityx::Entity entity, Creep&)
+    es.each<Creep, Transformable, Movable>([&](entityx::Entity entity, Creep&, Transformable&, Movable&)
     {
         moveCreep(entity, events, dt);
     });

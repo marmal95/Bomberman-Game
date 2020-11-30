@@ -7,11 +7,14 @@
 App::App()
 {
     GameStage::changeStage(std::make_unique<MenuStage>());
+    textures.load(ResourceID::Icon, "resources/icon.png");
 }
 
 void App::run()
 {
     auto& window = ResourcesManager::getInstance().window;
+    auto& icon = textures.getResource(ResourceID::Icon);
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     sf::Clock clock;
     while (window.isOpen())

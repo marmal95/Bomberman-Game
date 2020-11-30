@@ -52,16 +52,10 @@ void AnimateSystem::handleFinishGameEvent(entityx::EventManager& events, entityx
 {
     if (finishGameEvent)
     {
-        timeToSpawnFinishingGameTile -= dt;
-        if (timeToSpawnFinishingGameTile < 0)
-        {
-            const auto tileIndexToSpawn = finishingGameTilesPositions.front();
-            events.emit<SpawnTileEvent>(SpawnTileEvent{ calculatePositionForTileIndex(tileIndexToSpawn) , TileType::FinishingGameAnimationBlock });
+        const auto tileIndexToSpawn = finishingGameTilesPositions.front();
+        events.emit<SpawnTileEvent>(SpawnTileEvent{ calculatePositionForTileIndex(tileIndexToSpawn), TileType::FinishingGameAnimationBlock });
 
-            finishingGameTilesPositions.pop();
-            timeToSpawnFinishingGameTile = FINAL_ANIM_STEP_TIME;
-        }
-
+        finishingGameTilesPositions.pop();
         if (finishingGameTilesPositions.empty())
             notifyGameFinished(events);
     }

@@ -29,7 +29,7 @@ private:
     void handleCreepMoveChangeEvent(MoveChangeEvent&);
 
     void drawPlayers(entityx::EntityManager&) const;
-    void drawEntity(entityx::Entity, Drawable&, Transformable&, sf::RenderWindow&) const;
+    void drawEntity(entityx::Entity, Drawable&, Transformable&) const;
     void changeOpacity(Drawable&, const Player&) const;
 
     const ResourceHolder<sf::Texture, ResourceID>& textures;

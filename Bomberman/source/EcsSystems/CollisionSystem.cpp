@@ -8,6 +8,7 @@
 #include "SpawnPowerUpEvent.hpp"
 #include "PowerUp.hpp"
 #include "Movable.hpp"
+#include "Drawable.hpp"
 #include "Utils.hpp"
 
 
@@ -96,6 +97,12 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
     {
         player.health--;
         player.immortalTime = IMMORTAL_TIME_AFTER_DEAD;
+
+        if (player.health <= 0)
+        {
+            playerEntity.remove<Movable>();
+            playerEntity.remove<Drawable>();
+        }
     }
 }
 
