@@ -12,8 +12,14 @@
 #include "Utils.hpp"
 
 
+ExplosionSystem::ExplosionSystem(const ResourceHolder<sf::SoundBuffer, ResourceID>& sounds)
+    : sounds{ sounds }
+{}
+
 void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
+    removeFinishedSounds();
+
     const auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
   
     es.each<Flame>([&](entityx::Entity entity, Flame& flame) {
@@ -49,8 +55,16 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
             auto& bombOwner = *bomb.spawner.component<Player>();
             ++bombOwner.bombsNum;
             entity.destroy();
+
+            ongoingSounds.emplace_back(sounds.getResource(ResourceID::BombSound));
+            ongoingSounds.back().play();
         }
     });
+}
+
+void ExplosionSystem::removeFinishedSounds()
+{
+    ongoingSounds.remove_if([](auto& snd) {return snd.getStatus() == sf::Sound::Stopped; });
 }
 
 bool ExplosionSystem::spawnFlameInRow(

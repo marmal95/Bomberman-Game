@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IGameStage.hpp"
-#include <SFML/Graphics.hpp>
 #include <memory>
 
 class GameStage : public IGameStage

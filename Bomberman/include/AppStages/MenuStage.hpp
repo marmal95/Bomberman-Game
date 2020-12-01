@@ -4,6 +4,9 @@
 #include "ResourceHolder.hpp"
 #include "ResourceID.hpp"
 #include "MenuOption.hpp"
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 class MenuStage : public GameStage
 {

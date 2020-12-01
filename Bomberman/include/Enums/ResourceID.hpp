@@ -27,5 +27,7 @@ enum class ResourceID
     SpeedPowerUp,
 
     Font,
-    Icon
+    Icon,
+
+    BombSound
 };

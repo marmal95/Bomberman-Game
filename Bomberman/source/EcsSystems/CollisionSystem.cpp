@@ -100,8 +100,10 @@ void CollisionSystem::handleFlameCollision(entityx::Entity playerEntity, entityx
 
         if (player.health <= 0)
         {
-            playerEntity.remove<Movable>();
-            playerEntity.remove<Drawable>();
+            if (playerEntity.has_component<Movable>()) 
+                playerEntity.remove<Movable>();
+            if (playerEntity.has_component<Drawable>())
+                playerEntity.remove<Drawable>();
         }
     }
 }

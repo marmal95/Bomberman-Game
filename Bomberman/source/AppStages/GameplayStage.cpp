@@ -29,6 +29,11 @@ const ResourceHolder<sf::Texture, ResourceID>& GameplayStage::getTextures() cons
     return textures;
 }
 
+const ResourceHolder<sf::SoundBuffer, ResourceID>& GameplayStage::getSounds() const
+{
+    return sounds;
+}
+
 void GameplayStage::resizeWindow() const
 {
     const auto desktopMode = sf::VideoMode::getDesktopMode();
@@ -57,4 +62,5 @@ void GameplayStage::loadResources()
     textures.load(ResourceID::BombPowerUp, "resources/Powerups/BombPowerup.png");
     textures.load(ResourceID::FlamePowerUp, "resources/Powerups/FlamePowerup.png");
     textures.load(ResourceID::SpeedPowerUp, "resources/Powerups/SpeedPowerup.png");
+    sounds.load(ResourceID::BombSound, "resources/Sounds/bomb.wav");
 }

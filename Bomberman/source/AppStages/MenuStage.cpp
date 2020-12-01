@@ -1,6 +1,7 @@
 #include "MenuStage.hpp"
 #include "ResourceManager.hpp"
 #include "Constants.hpp"
+#include <SFML/Window/Event.hpp>
 
 MenuStage::MenuStage()
     : textures{}, fonts{}, background{}, title{}, playAgain{}, exitGame{}, selectedOption{ Option::PlayAgain }

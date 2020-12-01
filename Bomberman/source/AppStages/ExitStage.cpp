@@ -1,6 +1,7 @@
 #include "ExitStage.hpp"
 #include "ResourceManager.hpp"
 #include "Constants.hpp"
+#include <SFML/Window/Event.hpp>
 
 ExitStage::ExitStage(const GameStatus gameResult)
     : textures{}, fonts{}, background{}, bomberman{}, creep{}, bombermanStatus{}, creepStatus{}, playAgain{}, exitGame{}, selectedOption{ Option::PlayAgain }

@@ -22,7 +22,8 @@
 #include <algorithm>
 #include <random>
 #include <memory>
-#include <cstdlib>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
 
 EcsGameplay::EcsGameplay(const GameplayStage& stage)
     : gameplayStage{ stage }, gameStatus{ GameStatus::Running }
@@ -30,7 +31,7 @@ EcsGameplay::EcsGameplay(const GameplayStage& stage)
     systems.add<SpawnSystem>(gameplayStage.getTextures());
     systems.add<MoveSystem>();
     systems.add<CollisionSystem>();
-    systems.add<ExplosionSystem>();
+    systems.add<ExplosionSystem>(gameplayStage.getSounds());
     systems.add<AnimateSystem>();
     systems.add<DrawSystem>(gameplayStage.getTextures());
     systems.configure();
@@ -76,17 +77,15 @@ void EcsGameplay::handleEvent(sf::Event& event)
 {
     if (event.type == sf::Event::EventType::KeyReleased)
     {
-        if (event.key.code == sf::Keyboard::RControl)
-        {
-            auto player = entities.entities_with_components<Bomberman>().begin();
-            events.emit<SpawnBombEvent>({ *player });
-        }
+        auto bomberman = entities.entities_with_components<Bomberman>().begin();
+        auto creep = entities.entities_with_components<Creep>().begin();
 
-        if (event.key.code == sf::Keyboard::LControl)
-        {
-            auto player = entities.entities_with_components<Creep>().begin();
-            events.emit<SpawnBombEvent>({ *player });
-        }
+        // TODO: Move to MoveSystem?
+        if (event.key.code == sf::Keyboard::RControl && (*bomberman).has_component<Movable>())
+            events.emit<SpawnBombEvent>({ *bomberman });
+
+        if (event.key.code == sf::Keyboard::LControl && (*creep).has_component<Movable>())
+            events.emit<SpawnBombEvent>({ *creep });
     }
 }
 
@@ -118,7 +117,7 @@ void EcsGameplay::createMap()
         }
     }
 
-    //createExplodableBlocks(map, blankTilesIndexes);
+    createExplodableBlocks(map, blankTilesIndexes);
 
     auto mapEntity = entities.create();
     mapEntity.assign<Map>(map);
