@@ -10,6 +10,7 @@
 
 #ifdef _DEBUG
 #include "Collidable.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 #endif
 
 DrawSystem::DrawSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
@@ -47,6 +48,8 @@ void DrawSystem::handleMoveChangeEvents()
 {
     for (auto& event : moveChangeEvents)
     {
+        if (!event.entity.has_component<Drawable>())
+            continue;
         if (event.entity.has_component<Bomberman>())
             handleBombermanMoveChangeEvent(event);
         if (event.entity.has_component<Creep>())

@@ -80,7 +80,6 @@ void EcsGameplay::handleEvent(sf::Event& event)
         auto bomberman = entities.entities_with_components<Bomberman>().begin();
         auto creep = entities.entities_with_components<Creep>().begin();
 
-        // TODO: Move to MoveSystem?
         if (event.key.code == sf::Keyboard::RControl && (*bomberman).has_component<Movable>())
             events.emit<SpawnBombEvent>({ *bomberman });
 

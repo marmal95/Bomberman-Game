@@ -64,7 +64,7 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
 
 void ExplosionSystem::removeFinishedSounds()
 {
-    ongoingSounds.remove_if([](auto& snd) {return snd.getStatus() == sf::Sound::Stopped; });
+    ongoingSounds.remove_if([](auto& snd) { return snd.getStatus() == sf::Sound::Stopped; });
 }
 
 bool ExplosionSystem::spawnFlameInRow(
