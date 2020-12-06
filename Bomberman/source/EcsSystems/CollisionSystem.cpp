@@ -10,6 +10,7 @@
 #include "Movable.hpp"
 #include "Drawable.hpp"
 #include "Utils.hpp"
+#include <cmath>
 
 
 void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
@@ -63,7 +64,6 @@ void CollisionSystem::handlePlayerFlamesCollisions(entityx::Entity playerEntity,
 
 void CollisionSystem::handleTilesFlamesCollisions(entityx::EntityManager& es, entityx::EventManager& events) const
 {
-    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
     es.each<Flame, Collidable>([&](entityx::Entity flameEntity, Flame& flame, Collidable& playerCollidable) {
         es.each<Tile, Collidable, Transformable>([&](entityx::Entity tileEntity, Tile& tile, Collidable&, Transformable& tileTransformable) {
             handleTileFlameCollision(flameEntity, tileEntity, es, events);
@@ -128,6 +128,8 @@ void CollisionSystem::handlePowerUpCollision(entityx::Entity playerEntity, entit
         case PowerUpType::Speed:
             playerMovable.velocity *= 1.2f;
             break;
+        default:
+            break;
         }
 
         powerUpEntity.destroy();
@@ -163,7 +165,7 @@ std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity pla
     const auto dx = (playerTransformable.position.x + 0.5f * playerTransformable.size.x) - (otherTransformable.position.x + 0.5f * otherTransformable.size.x);
     const auto dy = (playerTransformable.position.y + 0.5f * playerTransformable.size.y) - (otherTransformable.position.y + 0.5f * otherTransformable.size.y);
 
-    if (abs(dx) < w && abs(dy) < h)
+    if (std::fabs(dx) < w && std::fabs(dy) < h)
     {
         const auto wy = w * dy;
         const auto hx = h * dx;
@@ -172,17 +174,17 @@ std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity pla
         {
             if (wy > -hx)
             {
-                return CollisionInfo{ { 0, h - abs(dy) }, Direction::Up };
+                return CollisionInfo{ { 0, h - std::fabs(dy) }, Direction::Up };
             }
             else
-                return CollisionInfo{ { -(w - abs(dx)), 0 }, Direction::Right };
+                return CollisionInfo{ { -(w - std::fabs(dx)), 0 }, Direction::Right };
         }
         else
         {
             if (wy > -hx)
-                return CollisionInfo{ { w - abs(dx), 0 }, Direction::Left };
+                return CollisionInfo{ { w - std::fabs(dx), 0 }, Direction::Left };
             else
-                return CollisionInfo{ { 0, -(h - abs(dy)) }, Direction::Down };
+                return CollisionInfo{ { 0, -(h - std::fabs(dy)) }, Direction::Down };
         }
     }
 

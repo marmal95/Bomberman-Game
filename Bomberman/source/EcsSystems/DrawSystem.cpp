@@ -67,6 +67,7 @@ void DrawSystem::handleBombermanMoveChangeEvent(MoveChangeEvent& event)
     case Direction::Right: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanRight)); break;
     case Direction::Up: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanBack)); break;
     case Direction::Down: drawable->sprite.setTexture(textures.getResource(ResourceID::BombermanFront)); break;
+    default: break;
     }
 }
 
@@ -79,14 +80,15 @@ void DrawSystem::handleCreepMoveChangeEvent(MoveChangeEvent& event)
     case Direction::Right: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepRight)); break;
     case Direction::Up: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepBack)); break;
     case Direction::Down: drawable->sprite.setTexture(textures.getResource(ResourceID::CreepFront)); break;
+    default: break;
     }
 }
 
 void DrawSystem::drawPlayers(entityx::EntityManager& es) const
 {
-    const auto entityPositionComparator = [](const auto left, const auto right) {
-        const auto& transformable1 = *left.component<const Transformable>();
-        const auto& transformable2 = *right.component<const Transformable>();
+    const auto entityPositionComparator = [](auto left, auto right) {
+        const auto transformable1 = *left.template component<const Transformable>();
+        const auto transformable2 = *right.template component<const Transformable>();
         return transformable1.position.y > transformable2.position.y;
     };
 

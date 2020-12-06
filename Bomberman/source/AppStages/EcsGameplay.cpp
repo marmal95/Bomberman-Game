@@ -100,7 +100,7 @@ void EcsGameplay::createMap()
             SpawnTileEvent event{};
             event.position = calculatePositionForTileIndex<int>({ i, j });
 
-            if (i == 0 || i == 20 || j == 0 || j == 20 || i % 2 == 0 && j % 2 == 0)
+            if (i == 0 || i == 20 || j == 0 || j == 20 || (i % 2 == 0 && j % 2 == 0))
             {
                 event.tileType = TileType::SolidBlock;
                 map.tiles[i][j] = { TileType::SolidBlock };

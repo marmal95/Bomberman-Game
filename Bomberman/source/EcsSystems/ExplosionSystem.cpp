@@ -21,7 +21,7 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
     removeFinishedSounds();
 
     const auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
-  
+
     es.each<Flame>([&](entityx::Entity entity, Flame& flame) {
         flame.timeToVanish -= dt;
 
@@ -70,7 +70,6 @@ void ExplosionSystem::removeFinishedSounds()
 bool ExplosionSystem::spawnFlameInRow(
     entityx::EntityManager& es, entityx::EventManager& events, const Map& map, entityx::Entity bomb, const sf::Vector2i bombIndex, const int i) const
 {
-    const auto& transformable = *bomb.component<Transformable>();
     if (auto columnIndex = bombIndex.y + i; columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
         map.tiles[bombIndex.x][columnIndex].tileType != TileType::SolidBlock)
     {
@@ -84,7 +83,6 @@ bool ExplosionSystem::spawnFlameInRow(
 bool ExplosionSystem::spawnFlameInCol(
     entityx::EntityManager& es, entityx::EventManager& events,const Map& map, entityx::Entity bomb, const sf::Vector2i bombIndex, const int i) const
 {
-    const auto& transformable = *bomb.component<Transformable>();
     if (auto rowIndex = bombIndex.x - i; rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
         map.tiles[rowIndex][bombIndex.y].tileType != TileType::SolidBlock)
     {

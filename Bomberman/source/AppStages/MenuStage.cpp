@@ -75,7 +75,6 @@ void MenuStage::initTexts()
 
 void MenuStage::initLayout()
 {
-    const auto& window = ResourcesManager::getInstance().window;
     playAgain.setPosition((MENU_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
     exitGame.setPosition((MENU_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);
 }
