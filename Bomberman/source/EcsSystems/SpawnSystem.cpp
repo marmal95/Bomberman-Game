@@ -10,6 +10,7 @@
 #include "PowerUp.hpp"
 #include "TopLevel.hpp"
 #include "Utils.hpp"
+#include "Map.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }, generator{ std::random_device{}() }, spawnPowerUpEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnTilesEvents{}
@@ -66,7 +67,6 @@ void SpawnSystem::handleSpawnBombEvents(entityx::EntityManager& es)
         if (player.bombsNum)
         {
             spawnBomb(es, event);
-            --player.bombsNum;
         }
     }
     spawnBombEvents.clear();
@@ -108,20 +108,27 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
     }
 }
 
-void SpawnSystem::spawnBomb(entityx::EntityManager& es, const SpawnBombEvent& event) const
+void SpawnSystem::spawnBomb(entityx::EntityManager& es, SpawnBombEvent& event) const
 {
-    const auto player = event.player.component<const Player>();
-    const auto& playerPosition = *event.player.component<const Transformable>();
+    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+    auto& player = *event.player.component<Player>();
 
+    const auto& playerPosition = *event.player.component<const Transformable>();
     const auto playerTileIndex = calculateTileIndexForCenterPosition(playerPosition.position, playerPosition.size);
-    const auto bombPosition = calculatePositionInTileCenter(playerTileIndex, BOMB_SPRITE_SIZE);
+    auto& mapTile = map.tiles[playerTileIndex.x][playerTileIndex.y];
+
+    if (mapTile.hasBomb || !player.bombsNum)
+        return;
 
     auto bomb = es.create();
     bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
-    bomb.assign<Transformable>(Transformable{ toVector2f(BOMB_SPRITE_SIZE), bombPosition });
+    bomb.assign<Transformable>(Transformable{ toVector2f(BOMB_SPRITE_SIZE), calculatePositionInTileCenter(playerTileIndex, BOMB_SPRITE_SIZE) });
     bomb.assign<Animated>(BOMB_SPRITE_SIZE, 3, 0.1);
-    bomb.assign<Bomb>(Bomb{ event.player, 3, player->bombsRange });
+    bomb.assign<Bomb>(Bomb{ event.player, 3, player.bombsRange });
     bomb.assign<Collidable>(Collidable{ event.player });
+
+    --player.bombsNum;
+    mapTile.hasBomb = true;
 }
 
 void SpawnSystem::spawnFlame(entityx::EntityManager& es, const SpawnFlameEvent& event) const

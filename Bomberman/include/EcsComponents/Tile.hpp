@@ -5,4 +5,5 @@
 struct Tile
 {
     TileType tileType;
+    bool hasBomb;
 };

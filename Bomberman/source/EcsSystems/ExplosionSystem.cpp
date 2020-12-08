@@ -20,7 +20,7 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
 {
     removeFinishedSounds();
 
-    const auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
 
     es.each<Flame>([&](entityx::Entity entity, Flame& flame) {
         flame.timeToVanish -= dt;
@@ -55,6 +55,7 @@ void ExplosionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
             auto& bombOwner = *bomb.spawner.component<Player>();
             ++bombOwner.bombsNum;
             entity.destroy();
+            map.tiles[bombIndex.x][bombIndex.y].hasBomb = false;
 
             ongoingSounds.emplace_back(sounds.getResource(ResourceID::BombSound));
             ongoingSounds.back().play();

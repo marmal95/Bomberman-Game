@@ -31,7 +31,7 @@ private:
 	void handleSpawnTileEvents(entityx::EntityManager&);
 
 	void spawnPowerUp(entityx::EntityManager&, const SpawnPowerUpEvent&);
-	void spawnBomb(entityx::EntityManager&, const SpawnBombEvent&) const;
+	void spawnBomb(entityx::EntityManager&, SpawnBombEvent&) const;
 	void spawnFlame(entityx::EntityManager&, const SpawnFlameEvent&) const;
 	void spawnTile(entityx::EntityManager&, const SpawnTileEvent&) const;
 
