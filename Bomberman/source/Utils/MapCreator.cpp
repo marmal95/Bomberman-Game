@@ -72,15 +72,15 @@ void MapCreator::createExplodableBlocks()
     const auto bombermanPositionIndex = calculateTileIndexForPosition(bombermanPosition);
     const auto creepPositionIndex = calculateTileIndexForPosition(creepPosition);
 
-    const auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (70 / 100.f));
-    blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos), std::end(blankTilesIndexes);
+    const auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (60 / 100.f));
+    blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos, std::end(blankTilesIndexes));
 
     for (const auto& blankTileIndex : blankTilesIndexes)
     {
         if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-            std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
+             std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
             (std::abs(blankTileIndex.x - creepPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-                std::abs(blankTileIndex.y - creepPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
+             std::abs(blankTileIndex.y - creepPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
         {
             eventManager.emit<SpawnTileEvent>(SpawnTileEvent{ calculatePositionForTileIndex(blankTileIndex), TileType::ExplodableBlock });
             map.tiles[blankTileIndex.x][blankTileIndex.y] = { TileType::ExplodableBlock };
