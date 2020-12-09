@@ -15,7 +15,7 @@ void MapCreator::createMap()
 {
     createSolidBlocks();
     createPortals();
-    //createExplodableBlocks();
+    createExplodableBlocks();
 
     auto mapEntity = entityManager.create();
     mapEntity.assign<Map>(map);

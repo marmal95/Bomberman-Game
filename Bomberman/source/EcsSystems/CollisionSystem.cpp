@@ -10,7 +10,6 @@
 #include "Movable.hpp"
 #include "Drawable.hpp"
 #include "Utils.hpp"
-#include "Solid.hpp"
 #include "Portal.hpp"
 #include <cmath>
 
@@ -31,7 +30,7 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
 
 void CollisionSystem::handlePlayerTilesCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
 {
-    es.each<Tile, Solid, Collidable>([&](entityx::Entity otherEntity, Tile&, Solid&, Collidable&) {
+    es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
         handleBlockingCollision(playerEntity, otherEntity);
     });
 }

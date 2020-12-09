@@ -35,7 +35,6 @@
     <ClInclude Include="include\EcsComponents\Movable.hpp" />
     <ClInclude Include="include\EcsComponents\Player.hpp" />
     <ClInclude Include="include\EcsComponents\PowerUp.hpp" />
-    <ClInclude Include="include\EcsComponents\Solid.hpp" />
     <ClInclude Include="include\EcsComponents\Tile.hpp" />
     <ClInclude Include="include\EcsComponents\TopLevel.hpp" />
     <ClInclude Include="include\EcsComponents\Transformable.hpp" />

@@ -12,7 +12,6 @@
 #include "Utils.hpp"
 #include "Map.hpp"
 #include "Portal.hpp"
-#include "Solid.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
     : textures{ textures }, generator{ std::random_device{}() },
@@ -117,12 +116,10 @@ void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& ev
     case TileType::SolidBlock:
         tile.assign<Collidable>();
         tile.assign<Drawable>(textures.getResource(ResourceID::SolidBlock));
-        tile.assign<Solid>();
         break;
     case TileType::ExplodableBlock:
         tile.assign<Collidable>();
         tile.assign<Drawable>(textures.getResource(ResourceID::ExplodableBlock));
-        tile.assign<Solid>();
         break;
     case TileType::FinishingGameAnimationBlock:
         tile.assign<TopLevel>();

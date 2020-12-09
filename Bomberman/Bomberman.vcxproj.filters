@@ -165,9 +165,6 @@
     <ClInclude Include="include\Utils\Utils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\EcsComponents\Solid.hpp">
-      <Filter>Header Files\EcsComponents</Filter>
-    </ClInclude>
     <ClInclude Include="include\Utils\MapCreator.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
