@@ -9,6 +9,7 @@ enum class ResourceID
     ExplodableBlock,
     SolidBlock,
     SolidRedBlock,
+    Portal,
 
     BombermanBack,
     BombermanFront,

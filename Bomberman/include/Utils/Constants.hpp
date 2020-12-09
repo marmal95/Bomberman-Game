@@ -11,6 +11,7 @@ constexpr float PLAYER_INITIAL_ANIM_SPEED = 1;
 constexpr float IMMORTAL_TIME_AFTER_DEAD = 3;
 
 const sf::Vector2i TILE_SIZE = { 64, 64 };
+const sf::Vector2i PORTAL_SPRITE_SIZES = { 64, 64 };
 const sf::Vector2i BOMBERMAN_SPRITE_SIZE = { 64, 128 };
 const sf::Vector2i BOMBERMAN_SIZE = { 30, 30 };
 const sf::Vector2i CREEP_SPRITE_SIZE = { 64, 64 };

@@ -37,6 +37,9 @@
     <Filter Include="Source Files\EcsSystems">
       <UniqueIdentifier>{81a50f20-c098-4f53-aa5e-fbf24b079b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{e27f6938-b3db-450c-b6ec-ea179dd50e7d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.hpp">
@@ -162,6 +165,18 @@
     <ClInclude Include="include\Utils\Utils.hpp">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\EcsComponents\Solid.hpp">
+      <Filter>Header Files\EcsComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\MapCreator.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Utils\PlayersCreator.hpp">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EcsEvents\SpawnPortalEvent.hpp">
+      <Filter>Header Files\EcsEvents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\App.cpp">
@@ -202,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="source\EcsSystems\SpawnSystem.cpp">
       <Filter>Source Files\EcsSystems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Utils\MapCreator.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Utils\PlayersCreator.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,12 @@ inline auto toVector2f(const sf::Vector2<T>& vector)
 }
 
 template<typename T>
+inline auto toVector2i(const sf::Vector2<T>& vector)
+{
+    return sf::Vector2i{ static_cast<int>(vector.x), static_cast<int>(vector.y) };
+}
+
+template<typename T>
 inline auto calculatePositionForTileIndex(const sf::Vector2<T>& index)
 {
     return sf::Vector2f{ static_cast<float>(index.y * TILE_SIZE.x),

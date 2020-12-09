@@ -6,22 +6,12 @@
 #include "ExplosionSystem.hpp"
 #include "SpawnSystem.hpp"
 #include "GameplayStage.hpp"
-#include "Transformable.hpp"
-#include "Drawable.hpp"
-#include "Movable.hpp"
-#include "Animated.hpp"
-#include "Player.hpp"
-#include "Collidable.hpp"
-#include "Constants.hpp"
 #include "SpawnBombEvent.hpp"
-#include "SpawnTileEvent.hpp"
 #include "FinishGameEvent.hpp"
-#include "Map.hpp"
 #include "ExitStage.hpp"
-#include "Utils.hpp"
-#include <algorithm>
-#include <random>
-#include <memory>
+#include "Player.hpp"
+#include "PlayersCreator.hpp"
+#include "MapCreator.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -37,9 +27,11 @@ EcsGameplay::EcsGameplay(const GameplayStage& stage)
     systems.configure();
     events.subscribe<GameFinishedEvent>(*this);
 
-    createBomberman();
-    createCreep();
-    createMap();
+    PlayersCreator playersCreator{ gameplayStage.getTextures(), entities, events };
+    playersCreator.createBomberman();
+    playersCreator.createCreep();
+
+    MapCreator{ entities, events }.createMap();
 }
 
 void EcsGameplay::receive(const GameFinishedEvent&)
@@ -86,94 +78,6 @@ void EcsGameplay::handleEvent(sf::Event& event)
         if (event.key.code == sf::Keyboard::LControl && (*creep).has_component<Movable>())
             events.emit<SpawnBombEvent>({ *creep });
     }
-}
-
-void EcsGameplay::createMap()
-{
-    Map map{};
-    std::vector<sf::Vector2i> blankTilesIndexes;
-
-    for (int i = 0; i < HEIGHT_TILES_NUM; i++)
-    {
-        for (int j = 0; j < WIDTH_TILES_NUM; j++)
-        {
-            SpawnTileEvent event{};
-            event.position = calculatePositionForTileIndex<int>({ i, j });
-
-            if (i == 0 || i == 20 || j == 0 || j == 20 || (i % 2 == 0 && j % 2 == 0))
-            {
-                event.tileType = TileType::SolidBlock;
-                map.tiles[i][j] = { TileType::SolidBlock };
-            }
-            else
-            {
-                event.tileType = TileType::None;
-                map.tiles[i][j] = { TileType::None };
-                blankTilesIndexes.push_back({ i, j });
-            }
-
-            events.emit<SpawnTileEvent>(std::move(event));
-        }
-    }
-
-    createExplodableBlocks(map, blankTilesIndexes);
-
-    auto mapEntity = entities.create();
-    mapEntity.assign<Map>(map);
-}
-
-void EcsGameplay::createExplodableBlocks(Map& map, std::vector<sf::Vector2i>& blankTilesIndexes)
-{
-    const auto& bombermanPosition = (*entities.entities_with_components<Bomberman>().begin()).component<Transformable>()->position;
-    const auto& creepPosition = (*entities.entities_with_components<Creep>().begin()).component<Transformable>()->position;
-
-    auto rd = std::random_device{};
-    auto rng = std::default_random_engine{ rd() };
-    std::shuffle(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), rng);
-
-    const auto bombermanPositionIndex = calculateTileIndexForPosition(bombermanPosition);
-    const auto creepPositionIndex = calculateTileIndexForPosition(creepPosition);
-
-    const auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (70 / 100.f));
-    blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos, std::end(blankTilesIndexes));
-
-    for (const auto& blankTileIndex : blankTilesIndexes)
-    {
-        if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-            std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
-            (std::abs(blankTileIndex.x - creepPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-                std::abs(blankTileIndex.y - creepPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
-        {
-            events.emit<SpawnTileEvent>(SpawnTileEvent{ calculatePositionForTileIndex(blankTileIndex), TileType::ExplodableBlock });
-            map.tiles[blankTileIndex.x][blankTileIndex.y] = { TileType::ExplodableBlock };
-        }
-    }
-}
-
-void EcsGameplay::createBomberman()
-{
-    auto entity = entities.create();
-    entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::BombermanFront));
-    entity.assign<Transformable>(Transformable{ toVector2f(BOMBERMAN_SIZE), calculatePositionInTileCenter({ 1, 1 }, BOMBERMAN_SIZE) });
-    entity.assign<Movable>(Movable{ toVector2f(PLAYER_INITIAL_SPEED), Direction::None });
-    entity.assign<Animated>(Animated{ { BOMBERMAN_SPRITE_SIZE.x, BOMBERMAN_SPRITE_SIZE.y }, 8, PLAYER_INITIAL_ANIM_SPEED });
-    entity.assign<Collidable>();
-    entity.assign<Player>();
-    entity.assign<Bomberman>();
-    events.emit<MoveChangeEvent>({ entity, Direction::None });
-}
-
-void EcsGameplay::createCreep()
-{
-    auto entity = entities.create();
-    entity.assign<Drawable>(gameplayStage.getTextures().getResource(ResourceID::CreepFront));
-    entity.assign<Transformable>(Transformable{ toVector2f(CREEP_SIZE), calculatePositionInTileCenter({ 19, 19 }, CREEP_SIZE) });
-    entity.assign<Movable>(Movable{ toVector2f(PLAYER_INITIAL_SPEED), Direction::None });
-    entity.assign<Animated>(Animated{ { CREEP_SPRITE_SIZE.x, CREEP_SPRITE_SIZE.y }, 6, PLAYER_INITIAL_ANIM_SPEED });
-    entity.assign<Collidable>();
-    entity.assign<Player>();
-    entity.assign<Creep>();
-    events.emit<MoveChangeEvent>({ entity, Direction::None });
 }
 
 void EcsGameplay::checkIsGameOver()

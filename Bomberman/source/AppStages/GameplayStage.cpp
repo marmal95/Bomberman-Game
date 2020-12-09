@@ -49,6 +49,7 @@ void GameplayStage::loadResources()
     textures.load(ResourceID::ExplodableBlock, "resources/Blocks/ExplodableBlock.png");
     textures.load(ResourceID::SolidBlock, "resources/Blocks/SolidBlock.png");
     textures.load(ResourceID::SolidRedBlock, "resources/Blocks/SolidRedBlock.png");
+    textures.load(ResourceID::Portal, "resources/Blocks/Portal.png");
     textures.load(ResourceID::BombermanBack, "resources/Bomberman/Bomberman_Back.png");
     textures.load(ResourceID::BombermanFront, "resources/Bomberman/Bomberman_Front.png");
     textures.load(ResourceID::BombermanLeft, "resources/Bomberman/Bomberman_Left.png");

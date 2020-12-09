@@ -20,16 +20,11 @@ public:
 	~EcsGameplay() = default;
 
 	void receive(const GameFinishedEvent&);
-
 	bool update(const entityx::TimeDelta) override;
 	void draw(sf::RenderWindow&) override;
 	void handleEvent(sf::Event&) override;
 
 private:
-	void createMap();
-	void createExplodableBlocks(Map&, std::vector<sf::Vector2i>&);
-	void createBomberman();
-	void createCreep();
 	void checkIsGameOver();
 
 	const GameplayStage& gameplayStage;

@@ -10,6 +10,8 @@
 #include "Movable.hpp"
 #include "Drawable.hpp"
 #include "Utils.hpp"
+#include "Solid.hpp"
+#include "Portal.hpp"
 #include <cmath>
 
 
@@ -22,13 +24,14 @@ void CollisionSystem::update(entityx::EntityManager& es, entityx::EventManager& 
         handlePlayerBombsCollisions(playerEntity, es);
         handlePlayerPowerUpsCollisions(playerEntity, es);
         handlePlayerFlamesCollisions(playerEntity, es, dt);
+        handlePlayerPortalsCollisions(playerEntity, es);
         handleTilesFlamesCollisions(es, events);
     });
 }
 
 void CollisionSystem::handlePlayerTilesCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
 {
-    es.each<Tile, Collidable>([&](entityx::Entity otherEntity, Tile&, Collidable&) {
+    es.each<Tile, Solid, Collidable>([&](entityx::Entity otherEntity, Tile&, Solid&, Collidable&) {
         handleBlockingCollision(playerEntity, otherEntity);
     });
 }
@@ -62,6 +65,13 @@ void CollisionSystem::handlePlayerFlamesCollisions(entityx::Entity playerEntity,
 
 }
 
+void CollisionSystem::handlePlayerPortalsCollisions(entityx::Entity playerEntity, entityx::EntityManager& es) const
+{
+    es.each<Portal, Collidable>([&](entityx::Entity otherEntity, Portal&, Collidable&) {
+        handlePlayerPortalCollision(playerEntity, otherEntity, es);
+    });
+}
+
 void CollisionSystem::handleTilesFlamesCollisions(entityx::EntityManager& es, entityx::EventManager& events) const
 {
     es.each<Flame, Collidable>([&](entityx::Entity flameEntity, Flame& flame, Collidable& playerCollidable) {
@@ -85,7 +95,8 @@ void CollisionSystem::handleBlockingCollision(entityx::Entity playerEntity, enti
     }
     else if (!collisionInfo && shouldSkipCollision(playerEntity, otherCollidable))
     {
-        otherCollidable.spawner.reset();
+        auto& skipEntities = otherCollidable.skipCollisionEntities;
+        skipEntities.erase(std::remove(skipEntities.begin(), skipEntities.end(), playerEntity), skipEntities.end());
     }
 }
 
@@ -139,7 +150,11 @@ void CollisionSystem::handlePowerUpCollision(entityx::Entity playerEntity, entit
 void CollisionSystem::handleTileFlameCollision(entityx::Entity flameEntity, entityx::Entity tileEntity, entityx::EntityManager& es, entityx::EventManager& events) const
 {
     const auto& tileTransformable = *tileEntity.component<Transformable>();
+    const auto tileIndex = calculateTileIndexForPosition(tileTransformable.position);
+
     auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+    if (map.tiles[tileIndex.x][tileIndex.y].tileType != TileType::ExplodableBlock)
+        return;
 
     if (auto collisionInfo = checkCollision(flameEntity, tileEntity); collisionInfo)
     {
@@ -150,9 +165,37 @@ void CollisionSystem::handleTileFlameCollision(entityx::Entity flameEntity, enti
     }
 }
 
+void CollisionSystem::handlePlayerPortalCollision(entityx::Entity playerEntity, entityx::Entity portalEntity, entityx::EntityManager& es) const
+{   
+    auto& playerCollidable = *playerEntity.component<Collidable>();
+    auto& portalCollidable = *portalEntity.component<Collidable>();
+    auto collisionInfo = checkCollision(playerEntity, portalEntity);
+
+    if (collisionInfo && !shouldSkipCollision(playerEntity, portalCollidable))
+    {
+        auto& playerTransformable = *playerEntity.component<Transformable>();
+
+        es.each<Portal, Transformable, Collidable>([&](entityx::Entity targetPortal, Portal&, Transformable& portalTransformable, Collidable& portalCollidable) {
+            if (portalEntity != targetPortal)
+            {
+                const auto targetPortalIndex = calculateTileIndexForPosition(portalTransformable.position);
+                playerTransformable.position = calculatePositionInTileCenter(targetPortalIndex, toVector2i(playerTransformable.size));
+                portalCollidable.skipCollisionEntities.push_back(playerEntity);
+                return;
+            }
+        });
+    }
+    else if (!collisionInfo && shouldSkipCollision(playerEntity, portalCollidable))
+    {
+        auto& skipEntities = portalCollidable.skipCollisionEntities;
+        skipEntities.erase(std::remove(skipEntities.begin(), skipEntities.end(), playerEntity), skipEntities.end());
+    }
+}
+
 bool CollisionSystem::shouldSkipCollision(const entityx::Entity& playerEntity, const Collidable& otherCollidable) const
 {
-    return playerEntity == otherCollidable.spawner;
+    auto& skipEntities = otherCollidable.skipCollisionEntities;
+    return std::find(skipEntities.begin(), skipEntities.end(), playerEntity) != skipEntities.end();
 }
 
 std::optional<CollisionInfo> CollisionSystem::checkCollision(entityx::Entity playerEntity, entityx::Entity otherEntity) const

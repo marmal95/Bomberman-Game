@@ -24,12 +24,15 @@ private:
 	void handlePlayerBombsCollisions(entityx::Entity, entityx::EntityManager&) const;
 	void handlePlayerPowerUpsCollisions(entityx::Entity, entityx::EntityManager&) const;
 	void handlePlayerFlamesCollisions(entityx::Entity, entityx::EntityManager&, const entityx::TimeDelta) const;
+	void handlePlayerPortalsCollisions(entityx::Entity, entityx::EntityManager&) const;
 	void handleTilesFlamesCollisions(entityx::EntityManager&, entityx::EventManager&) const;
 
 	void handleBlockingCollision(entityx::Entity, entityx::Entity) const;
 	void handleFlameCollision(entityx::Entity, entityx::Entity, const entityx::TimeDelta) const;
 	void handlePowerUpCollision(entityx::Entity, entityx::Entity) const;
 	void handleTileFlameCollision(entityx::Entity, entityx::Entity, entityx::EntityManager&, entityx::EventManager&) const;
+
+	void handlePlayerPortalCollision(entityx::Entity, entityx::Entity, entityx::EntityManager&) const;
 
 	bool shouldSkipCollision(const entityx::Entity&, const Collidable&) const;
 	std::optional<CollisionInfo> checkCollision(entityx::Entity, entityx::Entity) const;

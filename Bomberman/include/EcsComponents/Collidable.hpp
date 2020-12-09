@@ -1,15 +1,11 @@
 #pragma once
 
 #include <entityx/Entity.h>
-#include <optional>
+#include <vector>
 #include "Direction.hpp"
 
 struct Collidable
 {
-	Collidable(std::optional<entityx::Entity> spawner = std::nullopt)
-		: spawner{ spawner }, direction{ Direction::None }
-	{}
-
-	std::optional<entityx::Entity> spawner;
+	std::vector<entityx::Entity> skipCollisionEntities;
 	Direction direction;
 };

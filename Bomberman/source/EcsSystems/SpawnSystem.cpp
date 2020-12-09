@@ -11,17 +11,21 @@
 #include "TopLevel.hpp"
 #include "Utils.hpp"
 #include "Map.hpp"
+#include "Portal.hpp"
+#include "Solid.hpp"
 
 SpawnSystem::SpawnSystem(const ResourceHolder<sf::Texture, ResourceID>& textures)
-    : textures{ textures }, generator{ std::random_device{}() }, spawnPowerUpEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnTilesEvents{}
+    : textures{ textures }, generator{ std::random_device{}() },
+    spawnTilesEvents{}, spawnBombEvents{}, spawnFlameEvents{}, spawnPowerUpEvents{}, spawnPortalEvents{}
 {}
 
 void SpawnSystem::update(entityx::EntityManager& es, entityx::EventManager& events, entityx::TimeDelta dt)
 {
+    handleSpawnTileEvents(es);
     handleSpawnBombEvents(es);
     handleSpawnFlameEvents(es);
     handleSpawnPowerUpEvents(es);
-    handleSpawnTileEvents(es);
+    handleSpawnPortalEvents(es);
 }
 
 void SpawnSystem::configure(entityx::EventManager& events)
@@ -29,6 +33,7 @@ void SpawnSystem::configure(entityx::EventManager& events)
     events.subscribe<SpawnPowerUpEvent>(*this);
     events.subscribe<SpawnBombEvent>(*this);
     events.subscribe<SpawnFlameEvent>(*this);
+    events.subscribe<SpawnPortalEvent>(*this);
     events.subscribe<SpawnTileEvent>(*this);
 }
 
@@ -47,16 +52,21 @@ void SpawnSystem::receive(const SpawnFlameEvent& event)
     spawnFlameEvents.push_back(event);
 }
 
+void SpawnSystem::receive(const SpawnPortalEvent& event)
+{
+    spawnPortalEvents.push_back(event);
+}
+
 void SpawnSystem::receive(const SpawnTileEvent& event)
 {
     spawnTilesEvents.push_back(event);
 }
 
-void SpawnSystem::handleSpawnPowerUpEvents(entityx::EntityManager& es)
+void SpawnSystem::handleSpawnTileEvents(entityx::EntityManager& es)
 {
-    for (const auto& event : spawnPowerUpEvents)
-        spawnPowerUp(es, event);
-    spawnPowerUpEvents.clear();
+    for (const auto& event : spawnTilesEvents)
+        spawnTile(es, event);
+    spawnTilesEvents.clear();
 }
 
 void SpawnSystem::handleSpawnBombEvents(entityx::EntityManager& es)
@@ -79,11 +89,84 @@ void SpawnSystem::handleSpawnFlameEvents(entityx::EntityManager& es)
     spawnFlameEvents.clear();
 }
 
-void SpawnSystem::handleSpawnTileEvents(entityx::EntityManager& es)
+void SpawnSystem::handleSpawnPowerUpEvents(entityx::EntityManager& es)
 {
-    for (const auto& event : spawnTilesEvents)
-        spawnTile(es, event);
-    spawnTilesEvents.clear();
+    for (const auto& event : spawnPowerUpEvents)
+        spawnPowerUp(es, event);
+    spawnPowerUpEvents.clear();
+}
+
+void SpawnSystem::handleSpawnPortalEvents(entityx::EntityManager& es)
+{
+    for (const auto& event : spawnPortalEvents)
+        spawnPortal(es, event);
+    spawnPortalEvents.clear();
+}
+
+void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& event) const
+{
+    auto tile = es.create();
+    tile.assign<Transformable>(Transformable{ toVector2f(TILE_SIZE), event.position });
+    tile.assign<Tile>(Tile{ event.tileType });
+
+    switch (event.tileType)
+    {
+    case TileType::None:
+        tile.assign<Drawable>(textures.getResource(ResourceID::BackgroundTile));
+        break;
+    case TileType::SolidBlock:
+        tile.assign<Collidable>();
+        tile.assign<Drawable>(textures.getResource(ResourceID::SolidBlock));
+        tile.assign<Solid>();
+        break;
+    case TileType::ExplodableBlock:
+        tile.assign<Collidable>();
+        tile.assign<Drawable>(textures.getResource(ResourceID::ExplodableBlock));
+        tile.assign<Solid>();
+        break;
+    case TileType::FinishingGameAnimationBlock:
+        tile.assign<TopLevel>();
+        tile.assign<Drawable>(textures.getResource(ResourceID::SolidRedBlock));
+        break;
+    }
+}
+
+void SpawnSystem::spawnBomb(entityx::EntityManager& es, SpawnBombEvent& event) const
+{
+    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
+    auto& player = *event.player.component<Player>();
+
+    const auto& playerPosition = *event.player.component<const Transformable>();
+    const auto playerTileIndex = calculateTileIndexForCenterPosition(playerPosition.position, playerPosition.size);
+    auto& mapTile = map.tiles[playerTileIndex.x][playerTileIndex.y];
+
+    if (mapTile.hasBomb || !player.bombsNum)
+        return;
+
+    auto bomb = es.create();
+    bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
+    bomb.assign<Transformable>(Transformable{ toVector2f(BOMB_SPRITE_SIZE), calculatePositionInTileCenter(playerTileIndex, BOMB_SPRITE_SIZE) });
+    bomb.assign<Animated>(BOMB_SPRITE_SIZE, 3, 0.1);
+    bomb.assign<Bomb>(Bomb{ event.player, 3, player.bombsRange });
+
+    Collidable collidable{};
+    es.each<Player>([&collidable](entityx::Entity entity, Player&) {
+        collidable.skipCollisionEntities.push_back(entity);
+    });
+    bomb.assign<Collidable>(std::move(collidable));
+
+    --player.bombsNum;
+    mapTile.hasBomb = true;
+}
+
+void SpawnSystem::spawnFlame(entityx::EntityManager& es, const SpawnFlameEvent& event) const
+{
+    auto flame = es.create();
+    flame.assign<Flame>(Flame{ 2 });
+    flame.assign<Transformable>(Transformable{ toVector2f(FLAME_SPRITE_SIZE), event.position });
+    flame.assign<Drawable>(textures.getResource(ResourceID::Flame));
+    flame.assign<Animated>(FLAME_SPRITE_SIZE, 5, 0.1);
+    flame.assign<Collidable>();
 }
 
 void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEvent& event)
@@ -108,63 +191,13 @@ void SpawnSystem::spawnPowerUp(entityx::EntityManager& es, const SpawnPowerUpEve
     }
 }
 
-void SpawnSystem::spawnBomb(entityx::EntityManager& es, SpawnBombEvent& event) const
+void SpawnSystem::spawnPortal(entityx::EntityManager& es, const SpawnPortalEvent& event) const
 {
-    auto& map = *(*es.entities_with_components<Map>().begin()).component<Map>();
-    auto& player = *event.player.component<Player>();
-
-    const auto& playerPosition = *event.player.component<const Transformable>();
-    const auto playerTileIndex = calculateTileIndexForCenterPosition(playerPosition.position, playerPosition.size);
-    auto& mapTile = map.tiles[playerTileIndex.x][playerTileIndex.y];
-
-    if (mapTile.hasBomb || !player.bombsNum)
-        return;
-
-    auto bomb = es.create();
-    bomb.assign<Drawable>(textures.getResource(ResourceID::Bomb));
-    bomb.assign<Transformable>(Transformable{ toVector2f(BOMB_SPRITE_SIZE), calculatePositionInTileCenter(playerTileIndex, BOMB_SPRITE_SIZE) });
-    bomb.assign<Animated>(BOMB_SPRITE_SIZE, 3, 0.1);
-    bomb.assign<Bomb>(Bomb{ event.player, 3, player.bombsRange });
-    bomb.assign<Collidable>(Collidable{ event.player });
-
-    --player.bombsNum;
-    mapTile.hasBomb = true;
-}
-
-void SpawnSystem::spawnFlame(entityx::EntityManager& es, const SpawnFlameEvent& event) const
-{
-    auto flame = es.create();
-    flame.assign<Flame>(Flame{ 2 });
-    flame.assign<Transformable>(Transformable{ toVector2f(FLAME_SPRITE_SIZE), event.position });
-    flame.assign<Drawable>(textures.getResource(ResourceID::Flame));
-    flame.assign<Animated>(FLAME_SPRITE_SIZE, 5, 0.1);
-    flame.assign<Collidable>();
-}
-
-void SpawnSystem::spawnTile(entityx::EntityManager& es, const SpawnTileEvent& event) const
-{
-    auto tile = es.create();
-    tile.assign<Transformable>(Transformable{ toVector2f(TILE_SIZE), event.position });
-    tile.assign<Tile>(Tile{ event.tileType });
-
-    switch (event.tileType)
-    {
-    case TileType::None:
-        tile.assign<Drawable>(textures.getResource(ResourceID::BackgroundTile));
-        break;
-    case TileType::SolidBlock:
-        tile.assign<Collidable>();
-        tile.assign<Drawable>(textures.getResource(ResourceID::SolidBlock));
-        break;
-    case TileType::ExplodableBlock:
-        tile.assign<Collidable>();
-        tile.assign<Drawable>(textures.getResource(ResourceID::ExplodableBlock));
-        break;
-    case TileType::FinishingGameAnimationBlock:
-        tile.assign<TopLevel>();
-        tile.assign<Drawable>(textures.getResource(ResourceID::SolidRedBlock));
-        break;
-    }
+    auto portal = es.create();
+    portal.assign<Transformable>(Transformable{ toVector2f(PORTAL_SPRITE_SIZES), event.position });
+    portal.assign<Drawable>(textures.getResource(ResourceID::Portal));
+    portal.assign<Collidable>();
+    portal.assign<Portal>();
 }
 
 const sf::Texture& SpawnSystem::getPowerUpTexture(const PowerUpType type) const
