@@ -1,6 +1,7 @@
 #include "game/stages/exit/exit_stage.hpp"
 #include "game/game_manager.hpp"
 #include "util/constants.hpp"
+#include "util/converters.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -75,7 +76,7 @@ void ExitStage::resizeWindow() const
     const auto desktopMode = sf::VideoMode::getDesktopMode();
     auto& window = gameManager.getWindow();
     window.setSize(EXIT_WINDOW_SIZE);
-    window.setView(sf::View(sf::FloatRect(0, 0, EXIT_WINDOW_SIZE.x, EXIT_WINDOW_SIZE.y)));
+    window.setView(sf::View(sf::FloatRect(sf::Vector2f{}, toVector2f(EXIT_WINDOW_SIZE))));
     window.setPosition({static_cast<int>(desktopMode.width - window.getSize().x) / 2,
                         static_cast<int>(desktopMode.height - window.getSize().y) / 2});
 }

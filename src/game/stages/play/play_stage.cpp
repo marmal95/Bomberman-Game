@@ -95,7 +95,7 @@ void PlayStage::resizeWindow() const
     const auto desktopMode = sf::VideoMode::getDesktopMode();
     auto& window = gameManager.getWindow();
     window.setSize(GAME_WINDOW_SIZE);
-    window.setView(sf::View(sf::FloatRect(0, 0, GAME_WINDOW_SIZE.x, GAME_WINDOW_SIZE.y)));
+    window.setView(sf::View(sf::FloatRect(sf::Vector2f{}, toVector2f(GAME_WINDOW_SIZE))));
     window.setPosition({static_cast<int>(desktopMode.width - window.getSize().x) / 2, 0});
 }
 
