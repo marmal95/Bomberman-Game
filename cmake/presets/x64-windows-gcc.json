@@ -3,52 +3,52 @@
     "include": [
         "base.json",
         "os/windows.json",
-        "compilers/msvc.json"
+        "compilers/gcc.json"
     ],
     "configurePresets": [
         {
-            "name": "x64-windows-msvc-dynamic",
+            "name": "x64-windows-gcc-dynamic",
             "inherits": [
                 "base",
                 "windows",
-                "msvc"
+                "gcc"
             ],
-            "displayName": "x64 windows msvc dynamic libs",
+            "displayName": "x64 windows gcc dynamic libs",
             "cacheVariables": {
                 "BUILD_SHARED_LIBS": true,
-                "VCPKG_TARGET_TRIPLET": "x64-windows"
+                "VCPKG_TARGET_TRIPLET": "x64-windows-gcc"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "x64-windows-msvc-dynamic",
+            "name": "x64-windows-gcc-dynamic",
             "inherits": "base",
-            "configurePreset": "x64-windows-msvc-dynamic"
+            "configurePreset": "x64-windows-gcc-dynamic"
         }
     ],
     "testPresets": [
         {
-            "name": "x64-windows-msvc-dynamic",
+            "name": "x64-windows-gcc-dynamic",
             "inherits": "base",
-            "configurePreset": "x64-windows-msvc-dynamic"
+            "configurePreset": "x64-windows-gcc-dynamic"
         }
     ],
     "workflowPresets": [
         {
-            "name": "x64-windows-msvc-dynamic",
+            "name": "x64-windows-gcc-dynamic",
             "steps": [
                 {
                     "type": "configure",
-                    "name": "x64-windows-msvc-dynamic"
+                    "name": "x64-windows-gcc-dynamic"
                 },
                 {
                     "type": "build",
-                    "name": "x64-windows-msvc-dynamic"
+                    "name": "x64-windows-gcc-dynamic"
                 },
                 {
                     "type": "test",
-                    "name": "x64-windows-msvc-dynamic"
+                    "name": "x64-windows-gcc-dynamic"
                 }
             ]
         }

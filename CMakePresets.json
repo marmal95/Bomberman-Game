@@ -8,7 +8,7 @@
     "include": [
         "cmake/presets/x64-linux-gcc.json",
         "cmake/presets/x64-linux-clang.json",
-        "cmake/presets/x64-windows-clang.json",
+        "cmake/presets/x64-windows-gcc.json",
         "cmake/presets/x64-windows-msvc.json"
     ]
 }
