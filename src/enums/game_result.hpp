@@ -4,6 +4,7 @@ enum class GameResult
 {
     Running,
     Finishing,
+    Paused,
 
     BombermanWon,
     CreepWon,

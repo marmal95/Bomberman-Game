@@ -13,20 +13,19 @@
         "linux",
         "gcc"
       ],
-      "displayName": "x64 linux gcc static libs"
+      "displayName": "x64 linux gcc static libs",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-gcc-static"
+      }
     },
     {
       "name": "x64-linux-gcc-dynamic",
       "inherits": "x64-linux-gcc-static",
       "displayName": "x64 linux gcc dynamic libs",
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": true
+        "BUILD_SHARED_LIBS": true,
+        "VCPKG_TARGET_TRIPLET": "x64-linux-gcc-dynamic"
       }
-    },
-    {
-      "name": "x64-linux-gcc",
-      "inherits": "x64-linux-gcc-dynamic",
-      "displayName": "alias to x64-linux-gcc-dynamic"
     }
   ],
   "buildPresets": [
@@ -39,11 +38,6 @@
       "name": "x64-linux-gcc-dynamic",
       "inherits": "base",
       "configurePreset": "x64-linux-gcc-dynamic"
-    },
-    {
-      "name": "x64-linux-gcc",
-      "inherits": "x64-linux-gcc-dynamic",
-      "configurePreset": "x64-linux-gcc"
     }
   ],
   "testPresets": [
@@ -56,11 +50,6 @@
       "name": "x64-linux-gcc-dynamic",
       "inherits": "base",
       "configurePreset": "x64-linux-gcc-dynamic"
-    },
-    {
-      "name": "x64-linux-gcc",
-      "inherits": "x64-linux-gcc-dynamic",
-      "configurePreset": "x64-linux-gcc"
     }
   ],
   "workflowPresets": [
@@ -95,23 +84,6 @@
         {
           "type": "test",
           "name": "x64-linux-gcc-dynamic"
-        }
-      ]
-    },
-    {
-      "name": "x64-linux-gcc",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x64-linux-gcc"
-        },
-        {
-          "type": "build",
-          "name": "x64-linux-gcc"
-        },
-        {
-          "type": "test",
-          "name": "x64-linux-gcc"
         }
       ]
     }

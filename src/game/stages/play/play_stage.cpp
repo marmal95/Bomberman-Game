@@ -42,9 +42,16 @@ PlayStage::PlayStage(GameManager& gameManager)
 
 void PlayStage::handleEvent(const sf::Event& event)
 {
-    if (isKeyReleased(event, sf::Keyboard::Escape))
+    if (isKeyReleased(event, sf::Keyboard::P))
     {
-        gameManager.changeToExit({});
+        if (gameResult == GameResult::Running)
+        {
+            gameResult = GameResult::Paused;
+        }
+        else if (gameResult == GameResult::Paused)
+        {
+            gameResult = GameResult::Running;
+        }
     }
     if (isKeyReleased(event, sf::Keyboard::LControl))
     {
@@ -66,12 +73,15 @@ void PlayStage::handleEvent(const sf::Event& event)
 
 bool PlayStage::update(const TimeDelta dt)
 {
-    collisionSystem.update(dt);
-    explosionSystem.update(dt);
-    moveSystem.update(dt);
-    spawnSystem.update(dt);
-    animateSystem.update(dt);
-    checkIsGameOver();
+    if (gameResult != GameResult::Paused)
+    {
+        collisionSystem.update(dt);
+        explosionSystem.update(dt);
+        moveSystem.update(dt);
+        spawnSystem.update(dt);
+        animateSystem.update(dt);
+        checkIsGameOver();
+    }
     return true;
 }
 
@@ -173,18 +183,18 @@ void PlayStage::handleGameFinishedEvent(const GameFinishedEvent&)
 
 void PlayStage::checkIsGameOver()
 {
-    if (gameResult != GameResult::Running)
-        return;
-
-    const auto bomberman = registry.view<Player, Bomberman>().front();
-    const auto creep = registry.view<Player, Creep>().front();
-
-    const auto& bombermanPlayer = registry.get<Player>(bomberman);
-    const auto& creepPlayer = registry.get<Player>(creep);
-
-    if (!bombermanPlayer.health || !creepPlayer.health)
+    if (gameResult != GameResult::Finishing)
     {
-        dispatcher.trigger<FinishGameEvent>();
-        gameResult = GameResult::Finishing;
+        const auto bomberman = registry.view<Player, Bomberman>().front();
+        const auto creep = registry.view<Player, Creep>().front();
+
+        const auto& bombermanPlayer = registry.get<Player>(bomberman);
+        const auto& creepPlayer = registry.get<Player>(creep);
+
+        if (!bombermanPlayer.health || !creepPlayer.health)
+        {
+            dispatcher.trigger<FinishGameEvent>();
+            gameResult = GameResult::Finishing;
+        }
     }
 }

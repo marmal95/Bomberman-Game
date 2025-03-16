@@ -146,6 +146,7 @@ void SpawnSystem::handleSpawnPortalEvent(const SpawnPortalEvent& event)
     registry.emplace<Drawable>(portal, textures.getResource(ResourceID::Portal));
     registry.emplace<Collidable>(portal);
     registry.emplace<Portal>(portal);
+    registry.emplace<ZIndex>(portal, PORTAL_Z_INDEX);
 }
 
 const sf::Texture& SpawnSystem::getPowerUpTexture(const PowerUpType type) const

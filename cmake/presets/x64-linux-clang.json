@@ -26,11 +26,6 @@
         "BUILD_SHARED_LIBS": true,
         "VCPKG_TARGET_TRIPLET": "x64-linux-clang-dynamic"
       }
-    },
-    {
-      "name": "x64-linux-clang",
-      "inherits": "x64-linux-clang-dynamic",
-      "displayName": "alias to x64-linux-clang-dynamic"
     }
   ],
   "buildPresets": [
@@ -43,11 +38,6 @@
       "name": "x64-linux-clang-dynamic",
       "inherits": "base",
       "configurePreset": "x64-linux-clang-dynamic"
-    },
-    {
-      "name": "x64-linux-clang",
-      "inherits": "x64-linux-clang-dynamic",
-      "configurePreset": "x64-linux-clang"
     }
   ],
   "testPresets": [
@@ -60,11 +50,6 @@
       "name": "x64-linux-clang-dynamic",
       "inherits": "base",
       "configurePreset": "x64-linux-clang-dynamic"
-    },
-    {
-      "name": "x64-linux-clang",
-      "inherits": "x64-linux-clang-dynamic",
-      "configurePreset": "x64-linux-clang"
     }
   ],
   "workflowPresets": [
@@ -99,23 +84,6 @@
         {
           "type": "test",
           "name": "x64-linux-clang-dynamic"
-        }
-      ]
-    },
-    {
-      "name": "x64-linux-clang",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x64-linux-clang"
-        },
-        {
-          "type": "build",
-          "name": "x64-linux-clang"
-        },
-        {
-          "type": "test",
-          "name": "x64-linux-clang"
         }
       ]
     }

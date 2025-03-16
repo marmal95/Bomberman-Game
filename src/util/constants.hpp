@@ -32,5 +32,6 @@ constexpr int BLOCKS_Z_INDEX = 2;
 constexpr int BOMB_Z_INDEX = 4;
 constexpr int FLAME_Z_INDEX = 4;
 constexpr int ADDON_Z_INDEX = 4;
+constexpr int PORTAL_Z_INDEX = 4;
 constexpr int PLAYERS_Z_INDEX = 5;
 constexpr int TOP_LEVEL_Z_INDEX = 10;

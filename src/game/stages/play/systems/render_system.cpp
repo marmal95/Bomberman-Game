@@ -44,6 +44,10 @@ void RenderSystem::update(sf::RenderTarget& target)
         auto& drawable = registry.get<Drawable>(entity);
         auto& transform = registry.get<Transformable>(entity);
 
+        if (const auto player = registry.try_get<Player>(entity); player != nullptr)
+        {
+            changeOpacity(drawable, *player);
+        }
         drawEntity(target, entity, drawable, transform);
     }
 }
