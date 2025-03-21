@@ -26,12 +26,9 @@ ExitStage::ExitStage(GameManager& gameManager, const GameResult gameResult)
     initTexts();
     initLayout();
 
-    bombermanStatus.setString(
-        (gameResult == GameResult::BombermanWon || gameResult == GameResult::Draw) ? "Winner"
-                                                                                   : "Loser");
-    creepStatus.setString((gameResult == GameResult::CreepWon || gameResult == GameResult::Draw)
-                              ? "Winner"
-                              : "Loser");
+    bombermanStatus.setString((gameResult == GameResult::BombermanWon || gameResult == GameResult::Draw) ? "Winner"
+                                                                                                         : "Loser");
+    creepStatus.setString((gameResult == GameResult::CreepWon || gameResult == GameResult::Draw) ? "Winner" : "Loser");
 }
 
 void ExitStage::handleEvent(const sf::Event& event)
@@ -126,10 +123,8 @@ void ExitStage::initLayout()
     creep.setPosition(576 * 2 / 3.f - 32, 576 * 1 / 3.f - 64);
 
     bombermanStatus.setPosition(bomberman.getPosition().x,
-                                bomberman.getPosition().y + bomberman.getTexture()->getSize().y +
-                                    24);
-    creepStatus.setPosition(creep.getPosition().x,
-                            creep.getPosition().y + creep.getTexture()->getSize().y + 24);
+                                bomberman.getPosition().y + bomberman.getTexture()->getSize().y + 24);
+    creepStatus.setPosition(creep.getPosition().x, creep.getPosition().y + creep.getTexture()->getSize().y + 24);
 
     playAgain.setPosition((EXIT_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
     exitGame.setPosition((EXIT_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);

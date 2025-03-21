@@ -4,7 +4,7 @@
         {
             "name": "vcpkg",
             "hidden": true,
-            "toolchainFile": "C:\\Users\\marci\\scoop\\apps\\vcpkg\\current\\scripts\\buildsystems\\vcpkg.cmake",
+            "toolchainFile": "~/dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
                 "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/cmake/vcpkg/triplets"
             }

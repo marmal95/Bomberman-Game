@@ -2,6 +2,7 @@
 
 #include "enums/game_result.hpp"
 #include "enums/resource_id.hpp"
+#include "game/stages/play/entity_creator.hpp"
 #include "game/stages/play/systems/animate_system.hpp"
 #include "game/stages/play/systems/collision_system.hpp"
 #include "game/stages/play/systems/explosion_system.hpp"
@@ -45,6 +46,7 @@ class PlayStage : public Stage
 
     entt::registry registry;
     entt::dispatcher dispatcher;
+    EntityCreator entityCreator;
 
     AnimateSystem animateSystem;
     CollisionSystem collisionSystem;

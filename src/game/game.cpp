@@ -3,9 +3,7 @@
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
-    : clock{},
-      window{sf::VideoMode{GAME_WINDOW_SIZE.x, GAME_WINDOW_SIZE.y}, "Game Template"},
-      gameManager{window}
+    : clock{}, window{sf::VideoMode{GAME_WINDOW_SIZE.x, GAME_WINDOW_SIZE.y}, "Game Template"}, gameManager{window}
 {
     window.setFramerateLimit(60);
     gameManager.changeToMenu();

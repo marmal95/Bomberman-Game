@@ -1,5 +1,6 @@
 #include "game/stages/play/systems/render_system.hpp"
 #include "game/stages/play/components/collidable.hpp"
+#include "game/stages/play/components/debuggable.hpp"
 #include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/player.hpp"
 #include "game/stages/play/components/transformable.hpp"
@@ -11,6 +12,8 @@
 #include <entt/signal/dispatcher.hpp>
 #include <ranges>
 #include <vector>
+
+#define GAME_DEBUG true
 
 RenderSystem::RenderSystem(entt::registry& registry,
                            entt::dispatcher& dispatcher,
@@ -50,6 +53,18 @@ void RenderSystem::update(sf::RenderTarget& target)
         }
         drawEntity(target, entity, drawable, transform);
     }
+
+#ifdef GAME_DEBUG
+    registry.view<Debuggable>().each([&](entt::entity e, const Debuggable& d) {
+        sf::RectangleShape shape{};
+        shape.setPosition(d.position);
+        shape.setOrigin({});
+        shape.setFillColor(d.color);
+        shape.setSize(d.size);
+        target.draw(shape);
+        registry.destroy(e);
+    });
+#endif
 }
 
 void RenderSystem::handleEvent(const MoveChangeEvent& event)
@@ -71,11 +86,8 @@ void RenderSystem::handleBombermanMoveChangeEvent(const MoveChangeEvent& event)
 
 void RenderSystem::handleCreepMoveChangeEvent(const MoveChangeEvent& event)
 {
-    handlePlayerMove(event,
-                     ResourceID::CreepLeft,
-                     ResourceID::CreepRight,
-                     ResourceID::CreepBack,
-                     ResourceID::CreepFront);
+    handlePlayerMove(
+        event, ResourceID::CreepLeft, ResourceID::CreepRight, ResourceID::CreepBack, ResourceID::CreepFront);
 }
 
 void RenderSystem::handlePlayerMove(const MoveChangeEvent& event,
@@ -110,22 +122,9 @@ void RenderSystem::drawEntity(sf::RenderTarget& target,
                               const Transformable& transformable) const
 {
     drawable.sprite.setPosition(
-        transformable.position.x -
-            (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
-        transformable.position.y -
-            (drawable.sprite.getGlobalBounds().height - transformable.size.y));
+        transformable.position.x - (drawable.sprite.getGlobalBounds().width - transformable.size.x) / 2,
+        transformable.position.y - (drawable.sprite.getGlobalBounds().height - transformable.size.y));
     target.draw(drawable.sprite);
-
-    // if (registry.try_get<Collidable>(entity))
-    // {
-
-    //     sf::RectangleShape shape{};
-    //     shape.setPosition(transformable.position);
-    //     shape.setOrigin(drawable.sprite.getOrigin());
-    //     shape.setFillColor({255, 0, 0, 128});
-    //     shape.setSize(transformable.size);
-    //     target.draw(shape);
-    // }
 }
 
 void RenderSystem::changeOpacity(Drawable& drawable, const Player& player) const

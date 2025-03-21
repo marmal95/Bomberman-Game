@@ -2,9 +2,9 @@
 
 enum class Direction
 {
+    Up,
+    Right,
     Down,
     Left,
-    Right,
-    Up,
     None,
 };

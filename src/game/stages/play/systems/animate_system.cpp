@@ -15,8 +15,7 @@ AnimateSystem::AnimateSystem(entt::registry& registry, entt::dispatcher& dispatc
       finishingGameTilesPositions{},
       finishGameEvent{},
       finishAnimationDuration{2'000},
-      finishAnimationSpawnTileInterval{finishAnimationDuration /
-                                       (WIDTH_TILES_NUM * HEIGHT_TILES_NUM)}
+      finishAnimationSpawnTileInterval{finishAnimationDuration / (WIDTH_TILES_NUM * HEIGHT_TILES_NUM)}
 {
     dispatcher.sink<MoveChangeEvent>().connect<&AnimateSystem::handleMoveChangeEvent>(this);
     dispatcher.sink<FinishGameEvent>().connect<&AnimateSystem::handleFinishGameEvent>(this);
@@ -24,14 +23,13 @@ AnimateSystem::AnimateSystem(entt::registry& registry, entt::dispatcher& dispatc
 
 void AnimateSystem::update(const TimeDelta dt)
 {
-    registry.view<Animated, Drawable>().each(
-        [&](entt::entity, Animated& animated, Drawable& drawable) {
-            if (!animated.paused)
-                animated.frame += animated.speed;
-            if (animated.frame + animated.speed >= animated.frames.size())
-                animated.frame = 0;
-            drawable.sprite.setTextureRect(animated.frames[static_cast<int>(animated.frame)]);
-        });
+    registry.view<Animated, Drawable>().each([&](entt::entity, Animated& animated, Drawable& drawable) {
+        if (!animated.paused)
+            animated.frame += animated.speed;
+        if (animated.frame + animated.speed >= animated.frames.size())
+            animated.frame = 0;
+        drawable.sprite.setTextureRect(animated.frames[static_cast<int>(animated.frame)]);
+    });
 
     if (finishGameEvent)
     {
@@ -40,8 +38,7 @@ void AnimateSystem::update(const TimeDelta dt)
         {
             const auto tileIndexToSpawn = finishingGameTilesPositions.front();
             dispatcher.trigger<SpawnTileEvent>(
-                SpawnTileEvent{calculatePositionForTileIndex(tileIndexToSpawn),
-                               TileType::FinishingGameAnimationBlock});
+                SpawnTileEvent{calculatePositionForTileIndex(tileIndexToSpawn), TileType::FinishingGameAnimationBlock});
 
             finishingGameTilesPositions.pop();
 
@@ -85,8 +82,7 @@ void AnimateSystem::prepareFinishingAnimation()
 
         if (startingRowIndex < endingRowIndex)
         {
-            for (int columnIndex = endingColumnIndex - 1; columnIndex >= startingColumnIndex;
-                 --columnIndex)
+            for (int columnIndex = endingColumnIndex - 1; columnIndex >= startingColumnIndex; --columnIndex)
                 finishingGameTilesPositions.push({endingRowIndex - 1, columnIndex});
             endingRowIndex--;
         }

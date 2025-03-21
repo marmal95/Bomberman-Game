@@ -20,7 +20,7 @@ const sf::Vector2i BOMB_SPRITE_SIZE = {48, 48};
 const sf::Vector2i FLAME_SPRITE_SIZE = {48, 48};
 const sf::Vector2i POWER_UP_SPRITE_SIZE = {32, 32};
 
-const sf::Vector2i PLAYER_INITIAL_SPEED = {128, 128};
+const sf::Vector2f PLAYER_INITIAL_SPEED = {128., 128.};
 
 const sf::Vector2u MENU_WINDOW_SIZE = {576, 576};
 const sf::Vector2u EXIT_WINDOW_SIZE = {576, 576};

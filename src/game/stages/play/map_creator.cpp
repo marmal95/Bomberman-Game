@@ -54,17 +54,13 @@ void MapCreator::createPortals()
     sf::Vector2i firstPortalIndex{5, 5};
     sf::Vector2i secondPortalIndex{HEIGHT_TILES_NUM - 6, WIDTH_TILES_NUM - 6};
 
-    blankTilesIndexes.erase(
-        std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), firstPortalIndex),
-        std::end(blankTilesIndexes));
-    blankTilesIndexes.erase(
-        std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), secondPortalIndex),
-        std::end(blankTilesIndexes));
+    blankTilesIndexes.erase(std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), firstPortalIndex),
+                            std::end(blankTilesIndexes));
+    blankTilesIndexes.erase(std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), secondPortalIndex),
+                            std::end(blankTilesIndexes));
 
-    dispatcher.trigger<SpawnPortalEvent>(
-        SpawnPortalEvent{calculatePositionForTileIndex(firstPortalIndex)});
-    dispatcher.trigger<SpawnPortalEvent>(
-        SpawnPortalEvent{calculatePositionForTileIndex(secondPortalIndex)});
+    dispatcher.trigger<SpawnPortalEvent>(SpawnPortalEvent{calculatePositionForTileIndex(firstPortalIndex)});
+    dispatcher.trigger<SpawnPortalEvent>(SpawnPortalEvent{calculatePositionForTileIndex(secondPortalIndex)});
 }
 
 void MapCreator::createExplodableBlocks()
@@ -87,15 +83,13 @@ void MapCreator::createExplodableBlocks()
 
     for (const auto blankTileIndex : blankTilesIndexes)
     {
-        if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >=
-                 DISTANCE_TO_EXPLODABLE_BLOCKS ||
-             std::abs(blankTileIndex.y - bombermanPositionIndex.y) >=
-                 DISTANCE_TO_EXPLODABLE_BLOCKS) &&
+        if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
+             std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
             (std::abs(blankTileIndex.x - creepPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
              std::abs(blankTileIndex.y - creepPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
         {
-            dispatcher.trigger<SpawnTileEvent>(SpawnTileEvent{
-                calculatePositionForTileIndex(blankTileIndex), TileType::ExplodableBlock});
+            dispatcher.trigger<SpawnTileEvent>(
+                SpawnTileEvent{calculatePositionForTileIndex(blankTileIndex), TileType::ExplodableBlock});
             map.tiles[blankTileIndex.x][blankTileIndex.y] = {TileType::ExplodableBlock, false};
         }
     }

@@ -1,5 +1,5 @@
 #include "game/stages/play/systems/collision_system.hpp"
-#include "game/stages/play/components/bomb.hpp"
+#include "game/stages/play/collision_detector.hpp"
 #include "game/stages/play/components/collidable.hpp"
 #include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/flame.hpp"
@@ -22,45 +22,21 @@ CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dis
 
 void CollisionSystem::update(const TimeDelta dt)
 {
-    registry.view<Player, Collidable>().each(
-        [&](const entt::entity playerEntity, const Player&, Collidable& playerCollidable) {
-            playerCollidable.direction = Direction::None;
-
-            handlePlayerTilesCollisions(playerEntity);
-            handlePlayerBombsCollisions(playerEntity);
-            handlePlayerPowerUpsCollisions(playerEntity);
-            handlePlayerFlamesCollisions(playerEntity, dt);
-            handlePlayerPortalsCollisions(playerEntity);
-            handleTilesFlamesCollisions();
-        });
-}
-
-void CollisionSystem::handlePlayerTilesCollisions(const entt::entity player) const
-{
-    registry.view<Tile, Collidable>().each(
-        [&](const entt::entity tile, const Tile&, const Collidable&) {
-            handleBlockingCollision(player, tile);
-        });
-}
-
-void CollisionSystem::handlePlayerBombsCollisions(const entt::entity player) const
-{
-    registry.view<Bomb, Collidable>().each(
-        [&](const entt::entity bomb, const Bomb&, const Collidable&) {
-            handleBlockingCollision(player, bomb);
-        });
+    registry.view<Player>().each([&](const entt::entity playerEntity, const Player&) {
+        handlePlayerPowerUpsCollisions(playerEntity);
+        handlePlayerFlamesCollisions(playerEntity, dt);
+        handlePlayerPortalsCollisions(playerEntity);
+        handleTilesFlamesCollisions();
+    });
 }
 
 void CollisionSystem::handlePlayerPowerUpsCollisions(const entt::entity player) const
 {
-    registry.view<PowerUp, Collidable>().each(
-        [&](const entt::entity powerUp, const PowerUp&, const Collidable&) {
-            handlePowerUpCollision(player, powerUp);
-        });
+    registry.view<PowerUp>().each(
+        [&](const entt::entity powerUp, const PowerUp&) { handlePowerUpCollision(player, powerUp); });
 }
 
-void CollisionSystem::handlePlayerFlamesCollisions(const entt::entity player,
-                                                   const TimeDelta dt) const
+void CollisionSystem::handlePlayerFlamesCollisions(const entt::entity player, const TimeDelta dt) const
 {
     auto& playerComponent = registry.get<Player>(player);
     if (playerComponent.immortalTime > 0)
@@ -69,58 +45,32 @@ void CollisionSystem::handlePlayerFlamesCollisions(const entt::entity player,
     }
     else
     {
-        registry.view<Flame, Collidable>().each(
-            [&](const entt::entity flame, const Flame&, const Collidable&) {
-                handleFlameCollision(player, flame);
-            });
+        registry.view<Flame>().each(
+            [&](const entt::entity flame, const Flame&) { handleFlameCollision(player, flame); });
     }
 }
 
 void CollisionSystem::handlePlayerPortalsCollisions(const entt::entity player) const
 {
-    registry.view<Portal>().each([this, player](entt::entity portal, const Portal&) {
-        handlePlayerPortalCollision(player, portal);
-    });
+    registry.view<Portal>().each(
+        [this, player](entt::entity portal, const Portal&) { handlePlayerPortalCollision(player, portal); });
 }
 
 void CollisionSystem::handleTilesFlamesCollisions() const
 {
-    registry.view<Flame, Collidable>().each([&](const entt::entity flame,
-                                                const Flame&,
-                                                const Collidable&) {
-        registry.view<Tile, Collidable>().each([&](const entt::entity tile, Tile&, Collidable&) {
-            handleTileFlameCollision(tile, flame);
-        });
+    registry.view<Flame>().each([&](const entt::entity flame, const Flame&) {
+        registry.view<Tile>().each([&](const entt::entity tile, Tile&) { handleTileFlameCollision(tile, flame); });
     });
 }
 
-void CollisionSystem::handleBlockingCollision(const entt::entity first,
-                                              const entt::entity second) const
-{
-    const auto collisionInfo = checkCollision(first, second);
-    auto& firstCollidable = registry.get<Collidable>(first);
-    auto& secondCollidable = registry.get<Collidable>(second);
-
-    if (collisionInfo && !shouldSkipCollision(first, secondCollidable))
-    {
-        auto& firstTransformable = registry.get<Transformable>(first);
-        firstTransformable.position += collisionInfo->collisionRange;
-        firstCollidable.direction = collisionInfo->direction;
-    }
-    else if (!collisionInfo && shouldSkipCollision(first, secondCollidable))
-    {
-        auto& skipEntities = secondCollidable.skipCollisionEntities;
-        skipEntities.erase(std::remove(skipEntities.begin(), skipEntities.end(), first),
-                           skipEntities.end());
-    }
-}
-
-void CollisionSystem::handleFlameCollision(const entt::entity player,
-                                           const entt::entity flame) const
+void CollisionSystem::handleFlameCollision(const entt::entity player, const entt::entity flame) const
 {
     auto& playerComponent = registry.get<Player>(player);
-    const auto collisionInfo = checkCollision(player, flame);
-    if (collisionInfo && playerComponent.immortalTime <= 0)
+    auto& playerTransformable = registry.get<Transformable>(player);
+    auto& flameTransformable = registry.get<Transformable>(flame);
+    const auto collision = detectCollision(playerTransformable, flameTransformable);
+
+    if (collision && playerComponent.immortalTime <= 0)
     {
         playerComponent.health--;
         playerComponent.immortalTime = IMMORTAL_TIME_AFTER_DEAD;
@@ -139,11 +89,13 @@ void CollisionSystem::handleFlameCollision(const entt::entity player,
     }
 }
 
-void CollisionSystem::handlePowerUpCollision(const entt::entity player,
-                                             const entt::entity powerUp) const
+void CollisionSystem::handlePowerUpCollision(const entt::entity player, const entt::entity powerUp) const
 {
-    const auto collisionInfo = checkCollision(player, powerUp);
-    if (collisionInfo)
+    auto& playerTransformable = registry.get<Transformable>(player);
+    auto& powerUpTransformable = registry.get<Transformable>(powerUp);
+    const auto collision = detectCollision(playerTransformable, powerUpTransformable);
+
+    if (collision)
     {
         auto& playerComponent = registry.get<Player>(player);
         auto& movableComponent = registry.get<Movable>(player);
@@ -168,10 +120,10 @@ void CollisionSystem::handlePowerUpCollision(const entt::entity player,
     }
 }
 
-void CollisionSystem::handleTileFlameCollision(const entt::entity tile,
-                                               const entt::entity flame) const
+void CollisionSystem::handleTileFlameCollision(const entt::entity tile, const entt::entity flame) const
 {
     const auto& tileTransformable = registry.get<Transformable>(tile);
+    const auto& flameTransformable = registry.get<Transformable>(flame);
     const auto tileIndex = calculateTileIndexForPosition(tileTransformable.position);
 
     const auto map = registry.view<Map>().front();
@@ -182,7 +134,7 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile,
         return;
     }
 
-    if (const auto collisionInfo = checkCollision(tile, flame); collisionInfo.has_value())
+    if (const auto collisionInfo = detectCollision(tileTransformable, flameTransformable); collisionInfo.has_value())
     {
         const auto tileIndexPosition = calculateTileIndexForPosition(tileTransformable.position);
         mapComponent.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
@@ -191,82 +143,41 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile,
     }
 }
 
-void CollisionSystem::handlePlayerPortalCollision(const entt::entity player,
-                                                  const entt::entity portal) const
+void CollisionSystem::handlePlayerPortalCollision(const entt::entity player, const entt::entity portal) const
 {
     auto& sourcePortalCollidable = registry.get<Collidable>(portal);
-    const auto collisionInfo = checkCollision(player, portal);
+    const auto& playerTransformable = registry.get<Transformable>(player);
+    const auto& portalTransformable = registry.get<Transformable>(portal);
+
+    const auto collisionInfo = detectCollision(playerTransformable, portalTransformable);
 
     if (collisionInfo && !shouldSkipCollision(player, sourcePortalCollidable))
     {
         auto& playerTransformable = registry.get<Transformable>(player);
 
-        registry.view<Portal, Transformable, Collidable>().each(
-            [&](const entt::entity targetPortal,
-                const Portal&,
-                const Transformable& targetPortalTransformable,
-                Collidable& targetPortalCollidable) {
-                if (portal != targetPortal)
-                {
-                    const auto targetPortalIndex =
-                        calculateTileIndexForPosition(targetPortalTransformable.position);
-                    playerTransformable.position = calculatePositionInTileCenter(
-                        targetPortalIndex, toVector2i(playerTransformable.size));
-                    targetPortalCollidable.skipCollisionEntities.push_back(player);
-                    return;
-                }
-            });
+        registry.view<Portal, Transformable, Collidable>().each([&](const entt::entity targetPortal,
+                                                                    const Portal&,
+                                                                    const Transformable& targetPortalTransformable,
+                                                                    Collidable& targetPortalCollidable) {
+            if (portal != targetPortal)
+            {
+                const auto targetPortalIndex = calculateTileIndexForPosition(targetPortalTransformable.position);
+                playerTransformable.position =
+                    calculatePositionInTileCenter(targetPortalIndex, toVector2i(playerTransformable.size));
+                targetPortalCollidable.skipCollisionEntities.push_back(player);
+                return;
+            }
+        });
     }
     else if (!collisionInfo && shouldSkipCollision(player, sourcePortalCollidable))
     {
         auto& skipEntities = sourcePortalCollidable.skipCollisionEntities;
-        skipEntities.erase(std::remove(skipEntities.begin(), skipEntities.end(), player),
-                           skipEntities.end());
+        skipEntities.erase(std::remove(skipEntities.begin(), skipEntities.end(), player), skipEntities.end());
     }
 }
 
-bool CollisionSystem::shouldSkipCollision(const entt::entity entity,
-                                          const Collidable& collidable) const
+bool CollisionSystem::shouldSkipCollision(const entt::entity entity, const Collidable& collidable) const
 {
     auto& skipEntities = collidable.skipCollisionEntities;
     return std::find(skipEntities.begin(), skipEntities.end(), entity) != skipEntities.end();
-}
-
-std::optional<CollisionInfo> CollisionSystem::checkCollision(const entt::entity first,
-                                                             const entt::entity second) const
-{
-    const auto& firstTransformable = registry.get<Transformable>(first);
-    const auto& secondTransformable = registry.get<Transformable>(second);
-
-    const auto w = 0.5f * (firstTransformable.size.x + secondTransformable.size.x);
-    const auto h = 0.5f * (firstTransformable.size.y + secondTransformable.size.y);
-    const auto dx = (firstTransformable.position.x + 0.5f * firstTransformable.size.x) -
-                    (secondTransformable.position.x + 0.5f * secondTransformable.size.x);
-    const auto dy = (firstTransformable.position.y + 0.5f * firstTransformable.size.y) -
-                    (secondTransformable.position.y + 0.5f * secondTransformable.size.y);
-
-    if (std::fabs(dx) < w && std::fabs(dy) < h)
-    {
-        const auto wy = w * dy;
-        const auto hx = h * dx;
-
-        if (wy > hx)
-        {
-            if (wy > -hx)
-            {
-                return CollisionInfo{{0, h - std::fabs(dy)}, Direction::Up};
-            }
-            else
-                return CollisionInfo{{-(w - std::fabs(dx)), 0}, Direction::Right};
-        }
-        else
-        {
-            if (wy > -hx)
-                return CollisionInfo{{w - std::fabs(dx), 0}, Direction::Left};
-            else
-                return CollisionInfo{{0, -(h - std::fabs(dy))}, Direction::Down};
-        }
-    }
-
-    return std::nullopt;
 }

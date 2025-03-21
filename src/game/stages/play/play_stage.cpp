@@ -1,28 +1,24 @@
 #include "game/stages/play/play_stage.hpp"
-#include "components/drawable.hpp"
-#include "components/movable.hpp"
 #include "game/game_manager.hpp"
-#include "game/stages/play/components/animated.hpp"
-#include "game/stages/play/components/collidable.hpp"
-#include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/movable.hpp"
 #include "game/stages/play/components/player.hpp"
-#include "game/stages/play/components/transformable.hpp"
-#include "game/stages/play/components/z_index.hpp"
+#include "game/stages/play/entity_creator.hpp"
 #include "game/stages/play/events/game_finished_event.hpp"
 #include "game/stages/play/events/move_change_event.hpp"
 #include "game/stages/play/events/spawn_bomb_event.hpp"
 #include "game/stages/play/map_creator.hpp"
 #include "util/constants.hpp"
 #include "util/converters.hpp"
-#include "util/tile_calculator.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
 PlayStage::PlayStage(GameManager& gameManager)
     : Stage{gameManager},
+      textures{},
+      sounds{},
       registry{},
       dispatcher{},
+      entityCreator{registry, textures},
       animateSystem{registry, dispatcher},
       collisionSystem{registry, dispatcher},
       explosionSystem{registry, dispatcher, sounds},
@@ -124,43 +120,11 @@ void PlayStage::loadResources()
 
 void PlayStage::createPlayers()
 {
-    {
-        auto entity = registry.create();
-        registry.emplace<Drawable>(entity, textures.getResource(ResourceID::BombermanFront));
-        registry.emplace<Transformable>(
-            entity,
-            Transformable{toVector2f(BOMBERMAN_SIZE),
-                          calculatePositionInTileCenter({1, 1}, BOMBERMAN_SIZE)});
-        registry.emplace<Movable>(entity,
-                                  Movable{toVector2f(PLAYER_INITIAL_SPEED), Direction::None});
-        registry.emplace<Animated>(entity,
-                                   Animated{{BOMBERMAN_SPRITE_SIZE.x, BOMBERMAN_SPRITE_SIZE.y},
-                                            8,
-                                            PLAYER_INITIAL_ANIM_SPEED});
-        registry.emplace<Collidable>(entity);
-        registry.emplace<Player>(entity);
-        registry.emplace<Bomberman>(entity);
-        registry.emplace<ZIndex>(entity, PLAYERS_Z_INDEX);
-        dispatcher.trigger<MoveChangeEvent>({entity, Direction::None});
-    }
-    {
-        auto entity = registry.create();
-        registry.emplace<Drawable>(entity, textures.getResource(ResourceID::CreepFront));
-        registry.emplace<Transformable>(
-            entity,
-            Transformable{toVector2f(CREEP_SIZE),
-                          calculatePositionInTileCenter({19, 19}, CREEP_SIZE)});
-        registry.emplace<Movable>(entity,
-                                  Movable{toVector2f(PLAYER_INITIAL_SPEED), Direction::None});
-        registry.emplace<Animated>(
-            entity,
-            Animated{{CREEP_SPRITE_SIZE.x, CREEP_SPRITE_SIZE.y}, 6, PLAYER_INITIAL_ANIM_SPEED});
-        registry.emplace<Collidable>(entity);
-        registry.emplace<Player>(entity);
-        registry.emplace<Creep>(entity);
-        registry.emplace<ZIndex>(entity, PLAYERS_Z_INDEX);
-        dispatcher.trigger<MoveChangeEvent>({entity, Direction::None});
-    }
+    auto bomberman = entityCreator.createBomberman();
+    dispatcher.trigger<MoveChangeEvent>({bomberman, Direction::None});
+
+    const auto creep = entityCreator.createCreep();
+    dispatcher.trigger<MoveChangeEvent>({creep, Direction::None});
 }
 
 void PlayStage::handleGameFinishedEvent(const GameFinishedEvent&)

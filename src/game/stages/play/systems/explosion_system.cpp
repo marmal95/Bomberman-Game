@@ -38,8 +38,7 @@ void ExplosionSystem::update(const TimeDelta dt)
 
             if (bomb.timeToExplode <= 0)
             {
-                const sf::Vector2i bombIndex =
-                    calculateTileIndexForPosition(transformable.position);
+                const sf::Vector2i bombIndex = calculateTileIndexForPosition(transformable.position);
 
                 for (int i = 1; i <= bomb.range; i++)
                     if (!spawnFlameInRow(mapComponent, bombIndex, i))
@@ -73,35 +72,25 @@ void ExplosionSystem::removeFinishedSounds()
     ongoingSounds.remove_if([](auto& snd) { return snd.getStatus() == sf::Sound::Stopped; });
 }
 
-bool ExplosionSystem::spawnFlameInRow(const Map& map,
-                                      const sf::Vector2i bombIndex,
-                                      const int i) const
+bool ExplosionSystem::spawnFlameInRow(const Map& map, const sf::Vector2i bombIndex, const int i) const
 {
-    if (auto columnIndex = bombIndex.y + i;
-        columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
-        map.tiles[bombIndex.x][columnIndex].tileType != TileType::SolidBlock)
+    if (auto columnIndex = bombIndex.y + i; columnIndex >= 0 && columnIndex < WIDTH_TILES_NUM &&
+                                            map.tiles[bombIndex.x][columnIndex].tileType != TileType::SolidBlock)
     {
-        const auto isExplodable =
-            map.tiles[bombIndex.x][columnIndex].tileType == TileType::ExplodableBlock;
-        spawnFlame(calculatePositionInTileCenter(sf::Vector2i{bombIndex.x, columnIndex},
-                                                 FLAME_SPRITE_SIZE));
+        const auto isExplodable = map.tiles[bombIndex.x][columnIndex].tileType == TileType::ExplodableBlock;
+        spawnFlame(calculatePositionInTileCenter(sf::Vector2i{bombIndex.x, columnIndex}, FLAME_SPRITE_SIZE));
         return !isExplodable;
     }
     return false;
 }
 
-bool ExplosionSystem::spawnFlameInCol(const Map& map,
-                                      const sf::Vector2i bombIndex,
-                                      const int i) const
+bool ExplosionSystem::spawnFlameInCol(const Map& map, const sf::Vector2i bombIndex, const int i) const
 {
-    if (auto rowIndex = bombIndex.x - i;
-        rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
-        map.tiles[rowIndex][bombIndex.y].tileType != TileType::SolidBlock)
+    if (auto rowIndex = bombIndex.x - i; rowIndex >= 0 && rowIndex < HEIGHT_TILES_NUM &&
+                                         map.tiles[rowIndex][bombIndex.y].tileType != TileType::SolidBlock)
     {
-        const auto isExplodable =
-            map.tiles[rowIndex][bombIndex.y].tileType == TileType::ExplodableBlock;
-        spawnFlame(
-            calculatePositionInTileCenter(sf::Vector2i{rowIndex, bombIndex.y}, FLAME_SPRITE_SIZE));
+        const auto isExplodable = map.tiles[rowIndex][bombIndex.y].tileType == TileType::ExplodableBlock;
+        spawnFlame(calculatePositionInTileCenter(sf::Vector2i{rowIndex, bombIndex.y}, FLAME_SPRITE_SIZE));
         return !isExplodable;
     }
     return false;
