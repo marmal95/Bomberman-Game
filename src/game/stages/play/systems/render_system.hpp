@@ -1,7 +1,7 @@
 #pragma once
 
 #include "enums/resource_id.hpp"
-#include "util/resource_holder.hpp"
+#include "game/stages/play/resource_holder.hpp"
 #include <SFML/Graphics/Texture.hpp>
 #include <entt/entity/fwd.hpp>
 #include <entt/signal/fwd.hpp>

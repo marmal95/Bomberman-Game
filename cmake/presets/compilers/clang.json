@@ -7,15 +7,10 @@
             "environment": {
                 "CC": "clang",
                 "CXX": "clang++"
-            }
-        },
-        {
-            "name": "x86-clang",
-            "hidden": true,
-            "inherits": "clang",
+            },
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "-m32",
-                "CMAKE_CXX_FLAGS": "-m32"
+                "CMAKE_CXX_FLAGS_DEBUG": "-g -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -Werror -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor"
             }
         }
     ]

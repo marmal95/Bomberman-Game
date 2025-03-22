@@ -25,14 +25,20 @@ std::optional<Collision> detectCollision(const Transformable& firstTransformable
                 return Collision{{0, h - std::fabs(dy)}, Direction::Up};
             }
             else
+            {
                 return Collision{{-(w - std::fabs(dx)), 0}, Direction::Right};
+            }
         }
         else
         {
             if (wy > -hx)
+            {
                 return Collision{{w - std::fabs(dx), 0}, Direction::Left};
+            }
             else
+            {
                 return Collision{{0, -(h - std::fabs(dy))}, Direction::Down};
+            }
         }
     }
 

@@ -7,15 +7,10 @@
             "environment": {
                 "CC": "gcc",
                 "CXX": "g++"
-            }
-        },
-        {
-            "name": "x86-gcc",
-            "hidden": true,
-            "inherits": "gcc",
+            },
             "cacheVariables": {
-                "CMAKE_C_FLAGS": "-m32",
-                "CMAKE_CXX_FLAGS": "-m32"
+               "CMAKE_CXX_FLAGS_DEBUG": "-g -Wall -Wextra -Wpedantic -Wshadow=local -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor",
+                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -Werror -Wall -Wextra -Wpedantic -Wshadow=local -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor"
             }
         }
     ]

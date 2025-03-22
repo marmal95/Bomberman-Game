@@ -2,7 +2,7 @@
 
 #include "enums/power_up_type.hpp"
 #include "enums/resource_id.hpp"
-#include "util/resource_holder.hpp" // TODO: move to game?
+#include "game/stages/play/resource_holder.hpp"
 #include <SFML/Graphics/Texture.hpp>
 #include <entt/entity/registry.hpp>
 #include <random>

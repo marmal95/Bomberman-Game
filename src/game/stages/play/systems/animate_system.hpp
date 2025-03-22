@@ -7,7 +7,6 @@
 #include <entt/signal/fwd.hpp>
 #include <optional>
 #include <queue>
-#include <vector>
 
 struct MoveChangeEvent;
 
@@ -24,9 +23,9 @@ class AnimateSystem
 
     entt::registry& registry;
     entt::dispatcher& dispatcher;
-    std::queue<sf::Vector2i> finishingGameTilesPositions;
+    std::queue<TileIndex> finishingGameTilesPositions;
     std::optional<FinishGameEvent> finishGameEvent;
 
-    const int finishAnimationDuration;
-    const int finishAnimationSpawnTileInterval;
+    const float finishAnimationDuration;
+    const float finishAnimationSpawnTileInterval;
 };

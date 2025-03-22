@@ -56,7 +56,7 @@ void SpawnSystem::handleSpawnBombEvent(const SpawnBombEvent& event)
     auto& player = registry.get<Player>(event.player);
     const auto& playerPosition = registry.get<Transformable>(event.player);
     const auto playerTileIndex = calculateTileIndexForCenterPosition(playerPosition.position, playerPosition.size);
-    auto& mapTile = mapComponent.tiles[playerTileIndex.x][playerTileIndex.y];
+    auto& mapTile = mapComponent.getTile({playerTileIndex.x, playerTileIndex.y});
 
     if (mapTile.hasBomb || !player.bombsNum)
         return;

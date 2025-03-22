@@ -1,7 +1,7 @@
 #pragma once
 
 #include "enums/resource_id.hpp"
-#include "util/resource_holder.hpp"
+#include "game/stages/play/resource_holder.hpp"
 #include "util/types.hpp"
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -22,8 +22,8 @@ class ExplosionSystem
   private:
     void removeFinishedSounds();
 
-    bool spawnFlameInRow(const Map&, const sf::Vector2i, const int) const;
-    bool spawnFlameInCol(const Map&, const sf::Vector2i, const int) const;
+    bool spawnFlameInRow(const Map&, const TileIndex, const int) const;
+    bool spawnFlameInCol(const Map&, const TileIndex, const int) const;
     void spawnFlame(const sf::Vector2f) const;
 
     entt::registry& registry;

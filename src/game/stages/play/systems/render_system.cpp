@@ -1,5 +1,4 @@
 #include "game/stages/play/systems/render_system.hpp"
-#include "game/stages/play/components/collidable.hpp"
 #include "game/stages/play/components/debuggable.hpp"
 #include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/player.hpp"
@@ -10,7 +9,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
-#include <ranges>
 #include <vector>
 
 #define GAME_DEBUG true

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "enums/resource_id.hpp"
+#include "game/stages/play/resource_holder.hpp"
 #include "game/stages/stage.hpp"
-#include "util/resource_holder.hpp"
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Sprite.hpp>

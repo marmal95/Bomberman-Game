@@ -92,8 +92,8 @@ void MenuStage::initTexts()
 
 void MenuStage::initLayout()
 {
-    playAgain.setPosition((MENU_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
-    exitGame.setPosition((MENU_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);
+    playAgain.setPosition((static_cast<float>(MENU_WINDOW_SIZE.y) - playAgain.getGlobalBounds().width) / 2, 340);
+    exitGame.setPosition((static_cast<float>(MENU_WINDOW_SIZE.x) - exitGame.getGlobalBounds().width) / 2, 340 + 64);
 }
 
 void MenuStage::repaintOptions()

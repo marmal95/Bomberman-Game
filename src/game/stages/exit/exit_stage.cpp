@@ -122,12 +122,17 @@ void ExitStage::initLayout()
     bomberman.setPosition(576 * 1 / 3.f - 32, 576 * 1 / 3.f - 128);
     creep.setPosition(576 * 2 / 3.f - 32, 576 * 1 / 3.f - 64);
 
-    bombermanStatus.setPosition(bomberman.getPosition().x,
-                                bomberman.getPosition().y + bomberman.getTexture()->getSize().y + 24);
-    creepStatus.setPosition(creep.getPosition().x, creep.getPosition().y + creep.getTexture()->getSize().y + 24);
+    const sf::Vector2f bombermanPosition{bomberman.getPosition().x,
+                                         bomberman.getPosition().y +
+                                             static_cast<float>(bomberman.getTexture()->getSize().y) + 24.f};
+    bombermanStatus.setPosition(bombermanPosition);
 
-    playAgain.setPosition((EXIT_WINDOW_SIZE.y - playAgain.getGlobalBounds().width) / 2, 340);
-    exitGame.setPosition((EXIT_WINDOW_SIZE.x - exitGame.getGlobalBounds().width) / 2, 340 + 64);
+    const sf::Vector2f creepPostion{bomberman.getPosition().x,
+                                    creep.getPosition().y + static_cast<float>(creep.getTexture()->getSize().y) + 24.f};
+    creepStatus.setPosition(creepPostion);
+
+    playAgain.setPosition((static_cast<float>(EXIT_WINDOW_SIZE.y) - playAgain.getGlobalBounds().width) / 2, 340);
+    exitGame.setPosition((static_cast<float>(EXIT_WINDOW_SIZE.x) - exitGame.getGlobalBounds().width) / 2, 340 + 64);
 }
 
 void ExitStage::repaintOptions()

@@ -2,17 +2,14 @@
 #include "game/stages/play/collision_detector.hpp"
 #include "game/stages/play/components/collidable.hpp"
 #include "game/stages/play/components/debuggable.hpp"
-#include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/movable.hpp"
 #include "game/stages/play/components/player.hpp"
 #include "game/stages/play/components/transformable.hpp"
 #include "game/stages/play/events/move_change_event.hpp"
 #include "move_system.hpp"
-#include "util/constants.hpp"
 #include <cmath>
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
-#include <iostream>
 
 #define GAME_DEBUG
 

@@ -4,6 +4,8 @@
 #include "game/stages/play/events/spawn_portal_event.hpp"
 #include "game/stages/play/events/spawn_tile_event.hpp"
 #include "util/tile_calculator.hpp"
+#include "util/types.hpp"
+#include <SFML/System/Vector2.hpp>
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 #include <random>
@@ -30,17 +32,17 @@ void MapCreator::createSolidBlocks()
         for (int j = 0; j < WIDTH_TILES_NUM; j++)
         {
             SpawnTileEvent event{};
-            event.position = calculatePositionForTileIndex<int>({i, j});
+            event.position = calculatePositionForTileIndex(TileIndex{i, j});
 
             if (i == 0 || i == 20 || j == 0 || j == 20 || (i % 2 == 0 && j % 2 == 0))
             {
                 event.tileType = TileType::SolidBlock;
-                map.tiles[i][j] = {TileType::SolidBlock, false};
+                map.getTile({i, j}) = {TileType::SolidBlock, false};
             }
             else
             {
                 event.tileType = TileType::None;
-                map.tiles[i][j] = {TileType::None, false};
+                map.getTile({i, j}) = {TileType::None, false};
                 blankTilesIndexes.push_back({i, j});
             }
 
@@ -51,8 +53,8 @@ void MapCreator::createSolidBlocks()
 
 void MapCreator::createPortals()
 {
-    sf::Vector2i firstPortalIndex{5, 5};
-    sf::Vector2i secondPortalIndex{HEIGHT_TILES_NUM - 6, WIDTH_TILES_NUM - 6};
+    TileIndex firstPortalIndex{10, 5};
+    TileIndex secondPortalIndex{HEIGHT_TILES_NUM - 6, WIDTH_TILES_NUM - 6};
 
     blankTilesIndexes.erase(std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), firstPortalIndex),
                             std::end(blankTilesIndexes));
@@ -78,19 +80,24 @@ void MapCreator::createExplodableBlocks()
     const auto bombermanPositionIndex = calculateTileIndexForPosition(bombermanPosition);
     const auto creepPositionIndex = calculateTileIndexForPosition(creepPosition);
 
-    const auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * (60 / 100.f));
+    const auto splitPos = static_cast<uint32_t>(blankTilesIndexes.size() * 60 / 100);
     blankTilesIndexes.erase(std::begin(blankTilesIndexes) + splitPos, std::end(blankTilesIndexes));
 
     for (const auto blankTileIndex : blankTilesIndexes)
     {
-        if ((std::abs(blankTileIndex.x - bombermanPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-             std::abs(blankTileIndex.y - bombermanPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
-            (std::abs(blankTileIndex.x - creepPositionIndex.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
-             std::abs(blankTileIndex.y - creepPositionIndex.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
+        const sf::Vector2i tileDistanceToBomberman{blankTileIndex.x - bombermanPositionIndex.x,
+                                                   blankTileIndex.y - bombermanPositionIndex.y};
+        const sf::Vector2i tileDistanceToCreep{blankTileIndex.x - creepPositionIndex.x,
+                                               blankTileIndex.y - creepPositionIndex.y};
+
+        if ((std::abs(tileDistanceToBomberman.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
+             std::abs(tileDistanceToBomberman.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS) &&
+            (std::abs(tileDistanceToCreep.x) >= DISTANCE_TO_EXPLODABLE_BLOCKS ||
+             std::abs(tileDistanceToCreep.y) >= DISTANCE_TO_EXPLODABLE_BLOCKS))
         {
             dispatcher.trigger<SpawnTileEvent>(
                 SpawnTileEvent{calculatePositionForTileIndex(blankTileIndex), TileType::ExplodableBlock});
-            map.tiles[blankTileIndex.x][blankTileIndex.y] = {TileType::ExplodableBlock, false};
+            map.getTile({blankTileIndex.x, blankTileIndex.y}) = {TileType::ExplodableBlock, false};
         }
     }
 }

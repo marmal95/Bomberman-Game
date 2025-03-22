@@ -14,6 +14,8 @@
 #include "util/constants.hpp"
 #include "util/converters.hpp"
 #include "util/tile_calculator.hpp"
+#include <entt/entity/registry.hpp>
+#include <entt/signal/dispatcher.hpp>
 
 CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher)
     : registry{registry}, dispatcher{dispatcher}
@@ -129,7 +131,7 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile, const en
     const auto map = registry.view<Map>().front();
     auto& mapComponent = registry.get<Map>(map);
 
-    if (mapComponent.tiles[tileIndex.x][tileIndex.y].tileType != TileType::ExplodableBlock)
+    if (mapComponent.getTile({tileIndex.x, tileIndex.y}).tileType != TileType::ExplodableBlock)
     {
         return;
     }
@@ -137,7 +139,7 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile, const en
     if (const auto collisionInfo = detectCollision(tileTransformable, flameTransformable); collisionInfo.has_value())
     {
         const auto tileIndexPosition = calculateTileIndexForPosition(tileTransformable.position);
-        mapComponent.tiles[tileIndexPosition.x][tileIndexPosition.y].tileType = TileType::None;
+        mapComponent.getTile({tileIndexPosition.x, tileIndexPosition.y}).tileType = TileType::None;
         dispatcher.trigger<SpawnPowerUpEvent>(SpawnPowerUpEvent{tileTransformable.position});
         registry.destroy(tile);
     }
@@ -146,15 +148,13 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile, const en
 void CollisionSystem::handlePlayerPortalCollision(const entt::entity player, const entt::entity portal) const
 {
     auto& sourcePortalCollidable = registry.get<Collidable>(portal);
-    const auto& playerTransformable = registry.get<Transformable>(player);
+    auto& playerTransformable = registry.get<Transformable>(player);
     const auto& portalTransformable = registry.get<Transformable>(portal);
 
     const auto collisionInfo = detectCollision(playerTransformable, portalTransformable);
 
     if (collisionInfo && !shouldSkipCollision(player, sourcePortalCollidable))
     {
-        auto& playerTransformable = registry.get<Transformable>(player);
-
         registry.view<Portal, Transformable, Collidable>().each([&](const entt::entity targetPortal,
                                                                     const Portal&,
                                                                     const Transformable& targetPortalTransformable,

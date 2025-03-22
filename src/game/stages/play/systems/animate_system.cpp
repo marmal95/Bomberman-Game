@@ -26,9 +26,9 @@ void AnimateSystem::update(const TimeDelta dt)
     registry.view<Animated, Drawable>().each([&](entt::entity, Animated& animated, Drawable& drawable) {
         if (!animated.paused)
             animated.frame += animated.speed;
-        if (animated.frame + animated.speed >= animated.frames.size())
+        if (animated.frame + animated.speed >= static_cast<float>(animated.frames.size()))
             animated.frame = 0;
-        drawable.sprite.setTextureRect(animated.frames[static_cast<int>(animated.frame)]);
+        drawable.sprite.setTextureRect(animated.frames[static_cast<std::size_t>(animated.frame)]);
     });
 
     if (finishGameEvent)

@@ -3,6 +3,7 @@
 #include "enums/game_result.hpp"
 #include "enums/resource_id.hpp"
 #include "game/stages/play/entity_creator.hpp"
+#include "game/stages/play/resource_holder.hpp"
 #include "game/stages/play/systems/animate_system.hpp"
 #include "game/stages/play/systems/collision_system.hpp"
 #include "game/stages/play/systems/explosion_system.hpp"
@@ -10,7 +11,6 @@
 #include "game/stages/play/systems/render_system.hpp"
 #include "game/stages/play/systems/spawn_system.hpp"
 #include "game/stages/stage.hpp"
-#include "util/resource_holder.hpp"
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <entt/entt.hpp>
