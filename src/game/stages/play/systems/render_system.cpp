@@ -1,5 +1,4 @@
 #include "game/stages/play/systems/render_system.hpp"
-#include "game/stages/play/components/debuggable.hpp"
 #include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/player.hpp"
 #include "game/stages/play/components/transformable.hpp"
@@ -11,7 +10,9 @@
 #include <entt/signal/dispatcher.hpp>
 #include <vector>
 
-#define GAME_DEBUG true
+#ifdef GAME_DEBUG
+#include "game/stages/play/components/debuggable.hpp"
+#endif
 
 RenderSystem::RenderSystem(entt::registry& registry,
                            entt::dispatcher& dispatcher,
@@ -52,7 +53,7 @@ void RenderSystem::update(sf::RenderTarget& target)
         drawEntity(target, entity, drawable, transform);
     }
 
-#ifdef GAME_DEBUG
+#ifdef DEBUG_MODE
     registry.view<Debuggable>().each([&](entt::entity e, const Debuggable& d) {
         sf::RectangleShape shape{};
         shape.setPosition(d.position);

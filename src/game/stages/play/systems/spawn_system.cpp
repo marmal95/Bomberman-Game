@@ -15,8 +15,8 @@
 
 SpawnSystem::SpawnSystem(entt::registry& registry,
                          entt::dispatcher& dispatcher,
-                         const ResourceHolder<sf::Texture, ResourceID>& textures)
-    : registry{registry}, textures{textures}, entityCreator{registry, textures}
+                         EntityCreator& entityCreator)
+    : registry{registry}, entityCreator{entityCreator}
 {
     dispatcher.sink<SpawnTileEvent>().connect<&SpawnSystem::handleSpawnTileEvent>(this);
     dispatcher.sink<SpawnBombEvent>().connect<&SpawnSystem::handleSpawnBombEvent>(this);

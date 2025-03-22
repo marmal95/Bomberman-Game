@@ -127,7 +127,7 @@ void ExitStage::initLayout()
                                              static_cast<float>(bomberman.getTexture()->getSize().y) + 24.f};
     bombermanStatus.setPosition(bombermanPosition);
 
-    const sf::Vector2f creepPostion{bomberman.getPosition().x,
+    const sf::Vector2f creepPostion{creep.getPosition().x,
                                     creep.getPosition().y + static_cast<float>(creep.getTexture()->getSize().y) + 24.f};
     creepStatus.setPosition(creepPostion);
 

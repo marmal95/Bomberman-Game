@@ -30,3 +30,7 @@ set_common_target_compile_properties(bomberman)
 target_link_libraries(bomberman PRIVATE EnTT::EnTT)
 target_link_libraries(bomberman PRIVATE sfml-system sfml-network sfml-graphics sfml-window sfml-audio)
 target_include_directories(bomberman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (DEBUG_MODE)
+    target_compile_definitions(DEBUG_MODE=1)
+endif()

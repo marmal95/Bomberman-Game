@@ -1,7 +1,6 @@
 #include "game/stages/play/systems/move_system.hpp"
 #include "game/stages/play/collision_detector.hpp"
 #include "game/stages/play/components/collidable.hpp"
-#include "game/stages/play/components/debuggable.hpp"
 #include "game/stages/play/components/movable.hpp"
 #include "game/stages/play/components/player.hpp"
 #include "game/stages/play/components/transformable.hpp"
@@ -11,7 +10,9 @@
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 
-#define GAME_DEBUG
+#ifdef GAME_DEBUG
+#include "game/stages/play/components/debuggable.hpp"
+#endif
 
 namespace
 {
@@ -133,7 +134,7 @@ void MoveSystem::movePlayer(const entt::entity entity,
         playerTransformable,
         Transformable{playerTransformable.size, playerTransformable.position + currentMoveData.positionChange});
 
-#ifdef GAME_DEBUG
+#ifdef DEBUG_MODE
     const auto movementBoundingBoxEntity = registry.create();
     registry.emplace<Debuggable>(
         movementBoundingBoxEntity,

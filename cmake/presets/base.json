@@ -14,7 +14,8 @@
             ],
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG_MODE=1"
             }
         }
     ],

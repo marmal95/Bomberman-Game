@@ -24,7 +24,7 @@ PlayStage::PlayStage(GameManager& gameManager)
       explosionSystem{registry, dispatcher, sounds},
       moveSystem{registry, dispatcher},
       renderSystem{registry, dispatcher, textures},
-      spawnSystem{registry, dispatcher, textures},
+      spawnSystem{registry, dispatcher, entityCreator},
       gameResult{GameResult::Running}
 {
     resizeWindow();

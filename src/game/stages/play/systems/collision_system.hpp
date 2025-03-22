@@ -18,10 +18,12 @@ class CollisionSystem
     void handlePlayerFlamesCollisions(const entt::entity, const TimeDelta) const;
     void handlePlayerPortalsCollisions(const entt::entity) const;
     void handleTilesFlamesCollisions() const;
+    void handleBombsFlamesCollisions() const;
 
     void handleFlameCollision(const entt::entity, const entt::entity) const;
     void handlePowerUpCollision(const entt::entity, const entt::entity) const;
     void handleTileFlameCollision(const entt::entity, const entt::entity) const;
+    void handleBombFlameCollision(const entt::entity, const entt::entity) const;
 
     void handlePlayerPortalCollision(const entt::entity, const entt::entity) const;
 

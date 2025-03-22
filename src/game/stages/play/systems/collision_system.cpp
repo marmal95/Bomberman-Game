@@ -1,5 +1,6 @@
 #include "game/stages/play/systems/collision_system.hpp"
 #include "game/stages/play/collision_detector.hpp"
+#include "game/stages/play/components/bomb.hpp"
 #include "game/stages/play/components/collidable.hpp"
 #include "game/stages/play/components/drawable.hpp"
 #include "game/stages/play/components/flame.hpp"
@@ -28,8 +29,10 @@ void CollisionSystem::update(const TimeDelta dt)
         handlePlayerPowerUpsCollisions(playerEntity);
         handlePlayerFlamesCollisions(playerEntity, dt);
         handlePlayerPortalsCollisions(playerEntity);
-        handleTilesFlamesCollisions();
     });
+
+    handleTilesFlamesCollisions();
+    handleBombsFlamesCollisions();
 }
 
 void CollisionSystem::handlePlayerPowerUpsCollisions(const entt::entity player) const
@@ -62,6 +65,13 @@ void CollisionSystem::handleTilesFlamesCollisions() const
 {
     registry.view<Flame>().each([&](const entt::entity flame, const Flame&) {
         registry.view<Tile>().each([&](const entt::entity tile, Tile&) { handleTileFlameCollision(tile, flame); });
+    });
+}
+
+void CollisionSystem::handleBombsFlamesCollisions() const
+{
+    registry.view<Bomb>().each([&](const entt::entity bomb, const Bomb&) {
+        registry.view<Flame>().each([&](const entt::entity flame, Flame&) { handleBombFlameCollision(bomb, flame); });
     });
 }
 
@@ -142,6 +152,18 @@ void CollisionSystem::handleTileFlameCollision(const entt::entity tile, const en
         mapComponent.getTile({tileIndexPosition.x, tileIndexPosition.y}).tileType = TileType::None;
         dispatcher.trigger<SpawnPowerUpEvent>(SpawnPowerUpEvent{tileTransformable.position});
         registry.destroy(tile);
+    }
+}
+
+void CollisionSystem::handleBombFlameCollision(const entt::entity bomb, const entt::entity flame) const
+{
+    const auto& tileTransformable = registry.get<Transformable>(bomb);
+    const auto& flameTransformable = registry.get<Transformable>(flame);
+
+    if (const auto collisionInfo = detectCollision(tileTransformable, flameTransformable); collisionInfo.has_value())
+    {
+        auto& bombComponent = registry.get<Bomb>(bomb);
+        bombComponent.timeToExplode = 0;
     }
 }
 
