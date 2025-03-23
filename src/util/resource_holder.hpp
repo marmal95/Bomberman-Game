@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-template <typename Resource, typename Identifier> class ResourceHolder
+template <typename Resource, typename Identifier>
+class ResourceHolder
 {
   private:
     std::map<Identifier, std::unique_ptr<Resource>> mResourceMap;

@@ -6,6 +6,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <ranges>
+
+namespace
+{
+constexpr auto FIRST_ITEM_POSITION_Y = 300.f;
+constexpr auto ITEM_HEIGHT = 64;
+}
 
 ExitStage::ExitStage(GameManager& gameManager, const GameResult gameResult)
     : Stage{gameManager},
@@ -16,9 +23,8 @@ ExitStage::ExitStage(GameManager& gameManager, const GameResult gameResult)
       creep{},
       bombermanStatus{},
       creepStatus{},
-      playAgain{},
-      exitGame{},
-      selectedOption{Option::PlayAgain}
+      items{},
+      selectedIndex{}
 {
     resizeWindow();
     loadResources();
@@ -43,11 +49,11 @@ void ExitStage::handleEvent(const sf::Event& event)
     }
     else if (isKeyReleased(event, sf::Keyboard::Down))
     {
-        selectedOption = Option::ExitGame;
+        selectedIndex = std::min<int>(selectedIndex + 1, items.size() - 1);
     }
     else if (isKeyReleased(event, sf::Keyboard::Up))
     {
-        selectedOption = Option::PlayAgain;
+        selectedIndex = std::max(selectedIndex - 1, 0);
     }
 }
 
@@ -64,8 +70,11 @@ void ExitStage::render(sf::RenderTarget& target)
     target.draw(creep);
     target.draw(bombermanStatus);
     target.draw(creepStatus);
-    target.draw(playAgain);
-    target.draw(exitGame);
+
+    for (const auto& item : items)
+    {
+        target.draw(item.text);
+    }
 }
 
 void ExitStage::resizeWindow() const
@@ -99,64 +108,71 @@ void ExitStage::initSprites()
 void ExitStage::initTexts()
 {
     bombermanStatus.setFont(fonts.getResource(ResourceID::Font));
-    bombermanStatus.setFillColor(sf::Color{239, 209, 58});
+    bombermanStatus.setFillColor(color::MENU_ITEM);
     bombermanStatus.setCharacterSize(32);
 
     creepStatus.setFont(fonts.getResource(ResourceID::Font));
-    creepStatus.setFillColor(sf::Color{239, 209, 58});
+    creepStatus.setFillColor(color::MENU_ITEM);
     creepStatus.setCharacterSize(32);
 
-    playAgain.setFont(fonts.getResource(ResourceID::Font));
-    playAgain.setFillColor(sf::Color{239, 209, 58});
-    playAgain.setCharacterSize(48);
-    playAgain.setString("Play again");
+    {
+        sf::Text settings;
+        settings.setFont(fonts.getResource(ResourceID::Font));
+        settings.setCharacterSize(48);
+        settings.setString("Play again");
+        items.emplace_back(std::move(settings), MenuOption::Start);
+    }
 
-    exitGame.setFont(fonts.getResource(ResourceID::Font));
-    exitGame.setFillColor(sf::Color{239, 209, 58});
-    exitGame.setCharacterSize(48);
-    exitGame.setString("Exit game");
+    {
+        sf::Text settings;
+        settings.setFont(fonts.getResource(ResourceID::Font));
+        settings.setCharacterSize(48);
+        settings.setString("Exit");
+        items.emplace_back(std::move(settings), MenuOption::Exit);
+    }
 }
 
 void ExitStage::initLayout()
 {
-    bomberman.setPosition(576 * 1 / 3.f - 32, 576 * 1 / 3.f - 128);
-    creep.setPosition(576 * 2 / 3.f - 32, 576 * 1 / 3.f - 64);
+    bomberman.setPosition(EXIT_WINDOW_SIZE.x * 1 / 3.f - BOMBERMAN_SPRITE_SIZE.x / 2.f,
+                          EXIT_WINDOW_SIZE.y * 1 / 3.f - BOMBERMAN_SPRITE_SIZE.y);
+    creep.setPosition(EXIT_WINDOW_SIZE.x * 2 / 3.f - CREEP_SPRITE_SIZE.x,
+                      EXIT_WINDOW_SIZE.y * 1 / 3.f - CREEP_SPRITE_SIZE.y);
 
-    const sf::Vector2f bombermanPosition{bomberman.getPosition().x,
-                                         bomberman.getPosition().y +
-                                             static_cast<float>(bomberman.getTexture()->getSize().y) + 24.f};
-    bombermanStatus.setPosition(bombermanPosition);
+    constexpr auto playersToStatusMargin = 24.f;
+    const sf::Vector2f bombermanStatusPosition{
+        bomberman.getPosition().x,
+        bomberman.getPosition().y + static_cast<float>(bomberman.getTexture()->getSize().y) + playersToStatusMargin};
+    bombermanStatus.setPosition(bombermanStatusPosition);
 
-    const sf::Vector2f creepPostion{creep.getPosition().x,
-                                    creep.getPosition().y + static_cast<float>(creep.getTexture()->getSize().y) + 24.f};
-    creepStatus.setPosition(creepPostion);
+    const sf::Vector2f creepStatusPosition{creep.getPosition().x,
+                                           creep.getPosition().y + static_cast<float>(creep.getTexture()->getSize().y) +
+                                               playersToStatusMargin};
+    creepStatus.setPosition(creepStatusPosition);
 
-    playAgain.setPosition((static_cast<float>(EXIT_WINDOW_SIZE.y) - playAgain.getGlobalBounds().width) / 2, 340);
-    exitGame.setPosition((static_cast<float>(EXIT_WINDOW_SIZE.x) - exitGame.getGlobalBounds().width) / 2, 340 + 64);
+    for (auto [index, value] : std::views::zip(std::views::iota(0), items)) // TODO: C++23 std::views::enumerate
+    {
+        value.text.setPosition((MENU_WINDOW_SIZE.x - value.text.getGlobalBounds().width) / 2,
+                               FIRST_ITEM_POSITION_Y + index * ITEM_HEIGHT);
+    }
 }
 
 void ExitStage::repaintOptions()
 {
-    if (selectedOption == Option::PlayAgain)
+    for (auto [index, value] : std::views::zip(std::views::iota(0), items))
     {
-        playAgain.setFillColor(sf::Color{180, 0, 0});
-        exitGame.setFillColor(sf::Color{239, 209, 58});
-    }
-    else if (selectedOption == Option::ExitGame)
-    {
-        exitGame.setFillColor(sf::Color{180, 0, 0});
-        playAgain.setFillColor(sf::Color{239, 209, 58});
+        value.text.setFillColor(index == selectedIndex ? color::SELECTED_MENU_ITEM : color::MENU_ITEM);
     }
 }
 
 void ExitStage::changeStage() const
 {
-    switch (selectedOption)
+    switch (items[selectedIndex].option)
     {
-    case ExitStage::Option::PlayAgain:
+    case MenuOption::Start:
         gameManager.changeToGame();
         break;
-    case ExitStage::Option::ExitGame:
+    case MenuOption::Exit:
         gameManager.getWindow().close();
         break;
     }

@@ -19,9 +19,9 @@
 #include "game/stages/play/events/spawn_portal_event.hpp"
 #include "game/stages/play/events/spawn_power_up_event.hpp"
 #include "game/stages/play/events/spawn_tile_event.hpp"
-#include "game/stages/play/resource_holder.hpp"
 #include "util/constants.hpp"
 #include "util/converters.hpp"
+#include "util/resource_holder.hpp"
 #include "util/tile_calculator.hpp"
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>

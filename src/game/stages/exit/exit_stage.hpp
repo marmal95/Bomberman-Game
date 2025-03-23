@@ -2,9 +2,8 @@
 
 #include "enums/game_result.hpp"
 #include "enums/resource_id.hpp"
-#include "game/stages/play/resource_holder.hpp"
 #include "game/stages/stage.hpp"
-#include <SFML/Graphics/CircleShape.hpp>
+#include "util/resource_holder.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -22,13 +21,18 @@ class ExitStage : public Stage
     void handleEvent(const sf::Event&) override;
     bool update(const TimeDelta) override;
     void render(sf::RenderTarget&) override;
-    void changeStage() const;
 
   private:
-    enum class Option
+    enum class MenuOption
     {
-        PlayAgain,
-        ExitGame
+        Start,
+        Exit
+    };
+
+    struct MenuItem
+    {
+        sf::Text text;
+        MenuOption option;
     };
 
     void resizeWindow() const;
@@ -37,6 +41,7 @@ class ExitStage : public Stage
     void initTexts();
     void initLayout();
     void repaintOptions();
+    void changeStage() const;
 
     ResourceHolder<sf::Texture, ResourceID> textures;
     ResourceHolder<sf::Font, ResourceID> fonts;
@@ -45,7 +50,7 @@ class ExitStage : public Stage
     sf::Sprite creep;
     sf::Text bombermanStatus;
     sf::Text creepStatus;
-    sf::Text playAgain;
-    sf::Text exitGame;
-    Option selectedOption;
+
+    std::vector<MenuItem> items;
+    int selectedIndex;
 };

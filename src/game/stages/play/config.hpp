@@ -1,11 +1,21 @@
 #pragma once
 
 #include <iostream>
+#include <string_view>
 #include <toml++/impl/parse_error.hpp>
 #include <toml++/toml.hpp>
 
 namespace config
 {
+using Key = std::string_view;
+
+namespace keys
+{
+constexpr Key GAME = "game";
+constexpr Key PLAYERS_COLLIDABLE = "players_collidable";
+constexpr Key CHAIN_EXPLOSION = "chain_explosion";
+}
+
 struct Config
 {
     const bool playersCollidable{};
@@ -34,8 +44,9 @@ inline auto parse()
     try
     {
         auto config = toml::parse_file("configuration.toml");
-        auto result = Config{.playersCollidable = config["game"]["players_collidable"].value<bool>().value_or(false),
-                             .chainExplosion = config["game"]["chain_explosion"].value<bool>().value_or(false)};
+        auto result =
+            Config{.playersCollidable = config[keys::GAME][keys::PLAYERS_COLLIDABLE].value<bool>().value_or(false),
+                   .chainExplosion = config[keys::GAME][keys::CHAIN_EXPLOSION].value<bool>().value_or(false)};
         std::cout << "Config: " << result << std::endl;
         return result;
     }
@@ -46,6 +57,11 @@ inline auto parse()
     }
 
     return Config{};
+}
+
+inline void save(const Config& config)
+{
+    std::cout << "Updated config: " << config << std::endl;
 }
 
 }

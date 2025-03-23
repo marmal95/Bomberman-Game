@@ -13,9 +13,7 @@
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 
-SpawnSystem::SpawnSystem(entt::registry& registry,
-                         entt::dispatcher& dispatcher,
-                         EntityCreator& entityCreator)
+SpawnSystem::SpawnSystem(entt::registry& registry, entt::dispatcher& dispatcher, EntityCreator& entityCreator)
     : registry{registry}, entityCreator{entityCreator}
 {
     dispatcher.sink<SpawnTileEvent>().connect<&SpawnSystem::handleSpawnTileEvent>(this);

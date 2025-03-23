@@ -21,6 +21,7 @@ class GameManager
 
     void changeToMenu();
     void changeToGame();
+    void changeToSettings();
     void changeToExit(const GameResult result);
 
     sf::RenderWindow& getWindow();

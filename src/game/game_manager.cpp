@@ -2,6 +2,7 @@
 #include "game/stages/exit/exit_stage.hpp"
 #include "game/stages/menu/menu_stage.hpp"
 #include "game/stages/play/play_stage.hpp"
+#include "game/stages/settings/settings_stage.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 
 GameManager::GameManager(sf::RenderWindow& window) : window{window}
@@ -31,6 +32,11 @@ void GameManager::changeToMenu()
 void GameManager::changeToGame()
 {
     changeStage(std::make_unique<PlayStage>(*this));
+}
+
+void GameManager::changeToSettings()
+{
+    changeStage(std::make_unique<SettingsStage>(*this));
 }
 
 void GameManager::changeToExit(const GameResult result)

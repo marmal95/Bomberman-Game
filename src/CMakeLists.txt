@@ -16,6 +16,7 @@ add_executable(bomberman
     game/game_manager.cpp
     game/stages/stage.cpp
     game/stages/menu/menu_stage.cpp
+    game/stages/settings/settings_stage.cpp
     game/stages/play/collision_detector.cpp
     game/stages/play/entity_creator.cpp
     game/stages/play/map_creator.cpp

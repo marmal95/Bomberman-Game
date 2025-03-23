@@ -9,8 +9,8 @@
                 "CXX": "clang++"
             },
             "cacheVariables": {
-                "CMAKE_CXX_FLAGS_DEBUG": "-g -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor",
-                "CMAKE_CXX_FLAGS_RELEASE": "-O2 -Werror -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor"
+                "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG_MODE=1 -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor",
+                "CMAKE_CXX_FLAGS_RELEASE": "-Werror -Wall -Wextra -Wpedantic -Wshadow -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor"
             }
         }
     ]

@@ -1,0 +1,3 @@
+[game]
+players_collidable = true
+chain_explosion = true

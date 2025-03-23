@@ -6,16 +6,16 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <ranges>
+
+namespace
+{
+constexpr auto FIRST_ITEM_POSITION_Y = 300.f;
+constexpr auto ITEM_HEIGHT = 64;
+}
 
 MenuStage::MenuStage(GameManager& gameManager)
-    : Stage{gameManager},
-      textures{},
-      fonts{},
-      background{},
-      title{},
-      playAgain{},
-      exitGame{},
-      selectedOption{Option::PlayAgain}
+    : Stage{gameManager}, textures{}, fonts{}, background{}, title{}, items{}, selectedIndex{}
 {
     resizeWindow();
     loadResources();
@@ -32,11 +32,11 @@ void MenuStage::handleEvent(const sf::Event& event)
     }
     if (isKeyReleased(event, sf::Keyboard::Down))
     {
-        selectedOption = Option::ExitGame;
+        selectedIndex = std::min<int>(selectedIndex + 1, items.size() - 1);
     }
     if (isKeyReleased(event, sf::Keyboard::Up))
     {
-        selectedOption = Option::PlayAgain;
+        selectedIndex = std::max(selectedIndex - 1, 0);
     }
 }
 
@@ -50,8 +50,11 @@ void MenuStage::render(sf::RenderTarget& target)
 {
     target.draw(background);
     target.draw(title);
-    target.draw(playAgain);
-    target.draw(exitGame);
+
+    for (const auto& item : items)
+    {
+        target.draw(item.text);
+    }
 }
 
 void MenuStage::resizeWindow() const
@@ -79,45 +82,59 @@ void MenuStage::initSprites()
 
 void MenuStage::initTexts()
 {
-    playAgain.setFont(fonts.getResource(ResourceID::Font));
-    playAgain.setFillColor(sf::Color{239, 209, 58});
-    playAgain.setCharacterSize(48);
-    playAgain.setString("Play again");
+    {
+        sf::Text startGame;
+        startGame.setFont(fonts.getResource(ResourceID::Font));
+        startGame.setCharacterSize(48);
+        startGame.setString("Play again");
+        items.emplace_back(std::move(startGame), MenuOption::Start);
+    }
 
-    exitGame.setFont(fonts.getResource(ResourceID::Font));
-    exitGame.setFillColor(sf::Color{239, 209, 58});
-    exitGame.setCharacterSize(48);
-    exitGame.setString("Exit game");
+    {
+        sf::Text settings;
+        settings.setFont(fonts.getResource(ResourceID::Font));
+        settings.setCharacterSize(48);
+        settings.setString("Settings");
+        items.emplace_back(std::move(settings), MenuOption::Settings);
+    }
+
+    {
+        sf::Text exitGame;
+        exitGame.setFont(fonts.getResource(ResourceID::Font));
+        exitGame.setCharacterSize(48);
+        exitGame.setString("Exit game");
+        items.emplace_back(std::move(exitGame), MenuOption::Exit);
+    }
 }
 
 void MenuStage::initLayout()
 {
-    playAgain.setPosition((static_cast<float>(MENU_WINDOW_SIZE.y) - playAgain.getGlobalBounds().width) / 2, 340);
-    exitGame.setPosition((static_cast<float>(MENU_WINDOW_SIZE.x) - exitGame.getGlobalBounds().width) / 2, 340 + 64);
+    for (auto [index, value] : std::views::zip(std::views::iota(0), items)) // TODO: C++23 std::views::enumerate
+    {
+        value.text.setPosition((MENU_WINDOW_SIZE.x - value.text.getGlobalBounds().width) / 2,
+                               FIRST_ITEM_POSITION_Y + index * ITEM_HEIGHT);
+    }
 }
 
 void MenuStage::repaintOptions()
 {
-    if (selectedOption == Option::PlayAgain)
+    for (auto [index, value] : std::views::zip(std::views::iota(0), items))
     {
-        playAgain.setFillColor(sf::Color{180, 0, 0});
-        exitGame.setFillColor(sf::Color{239, 209, 58});
-    }
-    else if (selectedOption == Option::ExitGame)
-    {
-        exitGame.setFillColor(sf::Color{180, 0, 0});
-        playAgain.setFillColor(sf::Color{239, 209, 58});
+        value.text.setFillColor(index == selectedIndex ? color::SELECTED_MENU_ITEM : color::MENU_ITEM);
     }
 }
 
 void MenuStage::changeStage() const
 {
-    switch (selectedOption)
+    switch (items[selectedIndex].option)
     {
-    case MenuStage::Option::PlayAgain:
+    case MenuOption::Start:
         gameManager.changeToGame();
         break;
-    case MenuStage::Option::ExitGame:
+    case MenuOption::Settings:
+        gameManager.changeToSettings();
+        break;
+    case MenuOption::Exit:
         gameManager.getWindow().close();
         break;
     }

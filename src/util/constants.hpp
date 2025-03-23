@@ -1,7 +1,14 @@
 #pragma once
 
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <cstdint>
+
+namespace color
+{
+const auto SELECTED_MENU_ITEM = sf::Color{180, 0, 0};
+const auto MENU_ITEM = sf::Color{239, 209, 58};
+} // namespace color
 
 constexpr int WIDTH_TILES_NUM = 21;
 constexpr int HEIGHT_TILES_NUM = 21;
@@ -23,9 +30,10 @@ const sf::Vector2i POWER_UP_SPRITE_SIZE = {32, 32};
 const sf::Vector2f PLAYER_INITIAL_SPEED = {128., 128.};
 
 const sf::Vector2u MENU_WINDOW_SIZE = {576, 576};
+const sf::Vector2u SETTINGS_WINDOW_SIZE = {576, 576};
 const sf::Vector2u EXIT_WINDOW_SIZE = {576, 576};
 const sf::Vector2u GAME_WINDOW_SIZE = {static_cast<uint32_t>(WIDTH_TILES_NUM * TILE_SIZE.x),
-                                       static_cast<uint32_t>(WIDTH_TILES_NUM* TILE_SIZE.y)};
+                                       static_cast<uint32_t>(HEIGHT_TILES_NUM* TILE_SIZE.y)};
 
 constexpr int GROUND_Z_INDEX = 1;
 constexpr int BLOCKS_Z_INDEX = 2;
