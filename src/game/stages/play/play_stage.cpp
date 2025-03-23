@@ -2,6 +2,7 @@
 #include "game/game_manager.hpp"
 #include "game/stages/play/components/movable.hpp"
 #include "game/stages/play/components/player.hpp"
+#include "game/stages/play/config.hpp"
 #include "game/stages/play/entity_creator.hpp"
 #include "game/stages/play/events/game_finished_event.hpp"
 #include "game/stages/play/events/move_change_event.hpp"
@@ -14,13 +15,14 @@
 
 PlayStage::PlayStage(GameManager& gameManager)
     : Stage{gameManager},
+      config{config::parse()},
       textures{},
       sounds{},
       registry{},
       dispatcher{},
       entityCreator{registry, textures},
       animateSystem{registry, dispatcher},
-      collisionSystem{registry, dispatcher},
+      collisionSystem{registry, dispatcher, config},
       explosionSystem{registry, dispatcher, sounds},
       moveSystem{registry, dispatcher},
       renderSystem{registry, dispatcher, textures},
@@ -120,10 +122,10 @@ void PlayStage::loadResources()
 
 void PlayStage::createPlayers()
 {
-    auto bomberman = entityCreator.createBomberman();
+    auto bomberman = entityCreator.createBomberman(config);
     dispatcher.trigger<MoveChangeEvent>({bomberman, Direction::None});
 
-    const auto creep = entityCreator.createCreep();
+    const auto creep = entityCreator.createCreep(config);
     dispatcher.trigger<MoveChangeEvent>({creep, Direction::None});
 }
 

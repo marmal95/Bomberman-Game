@@ -13,6 +13,11 @@ struct SpawnPowerUpEvent;
 struct SpawnPortalEvent;
 struct SpawnBombEvent;
 
+namespace config
+{
+struct Config;
+}
+
 class EntityCreator
 {
   public:
@@ -21,8 +26,8 @@ class EntityCreator
     {
     }
 
-    entt::entity createBomberman();
-    entt::entity createCreep();
+    entt::entity createBomberman(const config::Config& config);
+    entt::entity createCreep(const config::Config& config);
     entt::entity createEmptyTile(const SpawnTileEvent& event);
     entt::entity createSolidBlock(const SpawnTileEvent& event);
     entt::entity createExplodableBlock(const SpawnTileEvent& event);

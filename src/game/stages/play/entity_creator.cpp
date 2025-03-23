@@ -13,6 +13,7 @@
 #include "game/stages/play/components/tile.hpp"
 #include "game/stages/play/components/transformable.hpp"
 #include "game/stages/play/components/z_index.hpp"
+#include "game/stages/play/config.hpp"
 #include "game/stages/play/events/spawn_bomb_event.hpp"
 #include "game/stages/play/events/spawn_flame_event.hpp"
 #include "game/stages/play/events/spawn_portal_event.hpp"
@@ -25,7 +26,7 @@
 #include <entt/entity/fwd.hpp>
 #include <entt/entity/registry.hpp>
 
-entt::entity EntityCreator::createBomberman()
+entt::entity EntityCreator::createBomberman(const config::Config& config)
 {
     auto entity = registry.create();
     registry.emplace<Drawable>(entity, textures.getResource(ResourceID::BombermanFront));
@@ -34,14 +35,19 @@ entt::entity EntityCreator::createBomberman()
     registry.emplace<Movable>(entity, Movable{PLAYER_INITIAL_SPEED, Direction::None});
     registry.emplace<Animated>(
         entity, Animated{{BOMBERMAN_SPRITE_SIZE.x, BOMBERMAN_SPRITE_SIZE.y}, 8, PLAYER_INITIAL_ANIM_SPEED});
-    registry.emplace<Collidable>(entity);
     registry.emplace<Player>(entity);
     registry.emplace<Bomberman>(entity);
     registry.emplace<ZIndex>(entity, PLAYERS_Z_INDEX);
+
+    registry.emplace<Collidable>(
+        entity,
+        Collidable{.type = (config.playersCollidable) ? CollidableType::Blocking : CollidableType::NonBlocking,
+                   .skipCollisionEntities = {}});
+
     return entity;
 }
 
-entt::entity EntityCreator::createCreep()
+entt::entity EntityCreator::createCreep(const config::Config& config)
 {
     auto entity = registry.create();
     registry.emplace<Drawable>(entity, textures.getResource(ResourceID::CreepFront));
@@ -50,10 +56,15 @@ entt::entity EntityCreator::createCreep()
     registry.emplace<Movable>(entity, Movable{PLAYER_INITIAL_SPEED, Direction::None});
     registry.emplace<Animated>(entity,
                                Animated{{CREEP_SPRITE_SIZE.x, CREEP_SPRITE_SIZE.y}, 6, PLAYER_INITIAL_ANIM_SPEED});
-    registry.emplace<Collidable>(entity);
     registry.emplace<Player>(entity);
     registry.emplace<Creep>(entity);
     registry.emplace<ZIndex>(entity, PLAYERS_Z_INDEX);
+
+    registry.emplace<Collidable>(
+        entity,
+        Collidable{.type = (config.playersCollidable) ? CollidableType::Blocking : CollidableType::NonBlocking,
+                   .skipCollisionEntities = {}});
+
     return entity;
 }
 

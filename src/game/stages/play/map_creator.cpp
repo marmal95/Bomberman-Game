@@ -53,7 +53,7 @@ void MapCreator::createSolidBlocks()
 
 void MapCreator::createPortals()
 {
-    TileIndex firstPortalIndex{10, 5};
+    TileIndex firstPortalIndex{5, 5};
     TileIndex secondPortalIndex{HEIGHT_TILES_NUM - 6, WIDTH_TILES_NUM - 6};
 
     blankTilesIndexes.erase(std::remove(std::begin(blankTilesIndexes), std::end(blankTilesIndexes), firstPortalIndex),

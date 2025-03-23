@@ -11,6 +11,7 @@
 #include "game/stages/play/components/power_up.hpp"
 #include "game/stages/play/components/tile.hpp"
 #include "game/stages/play/components/transformable.hpp"
+#include "game/stages/play/config.hpp"
 #include "game/stages/play/events/spawn_power_up_event.hpp"
 #include "util/constants.hpp"
 #include "util/converters.hpp"
@@ -18,8 +19,8 @@
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 
-CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher)
-    : registry{registry}, dispatcher{dispatcher}
+CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher, const config::Config& config)
+    : registry{registry}, dispatcher{dispatcher}, config{config}
 {
 }
 
@@ -32,7 +33,10 @@ void CollisionSystem::update(const TimeDelta dt)
     });
 
     handleTilesFlamesCollisions();
-    handleBombsFlamesCollisions();
+    if (config.chainExplosion)
+    {
+        handleBombsFlamesCollisions();
+    }
 }
 
 void CollisionSystem::handlePlayerPowerUpsCollisions(const entt::entity player) const

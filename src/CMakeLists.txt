@@ -7,6 +7,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 find_package(EnTT CONFIG REQUIRED)
 find_package(SFML COMPONENTS system window graphics audio CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
 
 add_executable(bomberman
     main.cpp
@@ -29,6 +31,7 @@ add_executable(bomberman
 set_common_target_compile_properties(bomberman)
 target_link_libraries(bomberman PRIVATE EnTT::EnTT)
 target_link_libraries(bomberman PRIVATE sfml-system sfml-network sfml-graphics sfml-window sfml-audio)
+target_link_libraries(bomberman PRIVATE PkgConfig::tomlplusplus)
 target_include_directories(bomberman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (DEBUG_MODE)

@@ -10,7 +10,7 @@
 #include <entt/entity/registry.hpp>
 #include <entt/signal/dispatcher.hpp>
 
-#ifdef GAME_DEBUG
+#ifdef DEBUG_MODE
 #include "game/stages/play/components/debuggable.hpp"
 #endif
 

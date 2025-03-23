@@ -4,7 +4,7 @@
 
 struct Player
 {
-    int bombsNum{1};
+    int bombsNum{5};
     int bombsRange{1};
     int health{3};
     TimeDelta immortalTime{};

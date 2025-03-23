@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/stages/play/config.hpp"
 #include "util/types.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <entt/entity/fwd.hpp>
@@ -7,10 +8,15 @@
 
 struct Collidable;
 
+namespace
+{
+struct Config;
+}
+
 class CollisionSystem
 {
   public:
-    CollisionSystem(entt::registry&, entt::dispatcher& dispatcher);
+    CollisionSystem(entt::registry&, entt::dispatcher&, const config::Config&);
     void update(const TimeDelta);
 
   private:
@@ -31,4 +37,5 @@ class CollisionSystem
 
     entt::registry& registry;
     entt::dispatcher& dispatcher;
+    const config::Config& config;
 };

@@ -2,6 +2,7 @@
 
 #include "enums/game_result.hpp"
 #include "enums/resource_id.hpp"
+#include "game/stages/play/config.hpp"
 #include "game/stages/play/entity_creator.hpp"
 #include "game/stages/play/resource_holder.hpp"
 #include "game/stages/play/systems/animate_system.hpp"
@@ -41,6 +42,7 @@ class PlayStage : public Stage
     void handleGameFinishedEvent(const GameFinishedEvent&);
     void checkIsGameOver();
 
+    config::Config config{};
     ResourceHolder<sf::Texture, ResourceID> textures;
     ResourceHolder<sf::SoundBuffer, ResourceID> sounds;
 
